@@ -30,6 +30,8 @@ To compile the palette, make sure you have the following:
 The palette also requires the following Java libraries:
 
 - The latest version of [BeepBeep 3](https://liflab.github.io/beepbeep-3)
+- The latest version of the
+  [BeepBeep Ltl palette](https://github.com/liflab/beepbeep-3-palettes/releases)
 
 These dependencies can be automatically downloaded and placed in the
 `dep` folder of the project by typing:
@@ -43,6 +45,7 @@ typing:
 
 This will produce a file called `prop-machine.jar` in the folder. This file
 is *not* runnable and stand-alone. It is meant to be used in a Java project
-alongside `beepbeep-3.jar`.
+alongside `beepbeep-3.jar` and `ltl.jar` (the dependencies downloaded by the
+Ant build script).
 
 <!-- :maxLineLen=78: -->

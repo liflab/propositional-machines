@@ -66,5 +66,15 @@
       </files>
       <bundle>false</bundle>
     </dependency>
+    <dependencies>
+    <dependency>
+      <!-- LTL palette -->
+      <name>BeepBeep LTL Palette</name>
+      <classname>ca.uqac.lif.cep.ltl.Troolean</classname>
+      <files>
+        <jar>https://github.com/liflab/beepbeep-3-palettes/releases/download/v20200325/ltl.jar</jar>
+      </files>
+      <bundle>false</bundle>
+    </dependency>
   </dependencies>
 </build>
