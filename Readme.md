@@ -13,7 +13,7 @@ Please refer to the following research paper for detailed information and
 examples of what this extension can do.
 
 > R. Taleb, R. Khoury, S. Hallé. *Runtime Verification under Access Control
-> Constraints*. In preparation.
+> Constraints*. In preparation; to be submitted in 2020.
 
 Further documentation might be added to this Readme some time in the future
 (any help is welcome!).
