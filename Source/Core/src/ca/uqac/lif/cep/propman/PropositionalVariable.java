@@ -23,7 +23,7 @@ import ca.uqac.lif.cep.ltl.Troolean;
 /**
  * A function that extracts the value of a variable name from a valuation.
  */
-public class PropositionalVariable extends UnaryFunction<Valuation,Troolean>
+public class PropositionalVariable extends UnaryFunction<Valuation,Troolean.Value>
 {
   /**
    * The name of the variable
@@ -46,17 +46,24 @@ public class PropositionalVariable extends UnaryFunction<Valuation,Troolean>
    */
   protected PropositionalVariable(String var_name)
   {
-    super(Valuation.class, Troolean.class);
+    super(Valuation.class, Troolean.Value.class);
     m_varName = var_name;
   }
 
   @Override
-  public Troolean getValue(Valuation v)
+  public Troolean.Value getValue(Valuation v)
   {
     if (v.containsKey(m_varName))
     {
       return v.get(m_varName);
     }
-    return Troolean.INCONCLUSIVE;
+    return Troolean.Value.INCONCLUSIVE;
   }
+
+  public String getM_varName() {
+	return m_varName;
+  }
+
+  
+  
 }
