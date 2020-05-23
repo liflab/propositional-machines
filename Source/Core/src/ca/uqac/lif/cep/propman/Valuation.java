@@ -18,7 +18,8 @@
 package ca.uqac.lif.cep.propman;
 
 import ca.uqac.lif.cep.ltl.Troolean;
-import java.util.HashMap; 
+import java.util.HashMap;
+import java.util.Map; 
 
 /**
  * A map between variable names and ternary Boolean values (i.e. Trooleans).
@@ -29,4 +30,33 @@ public class Valuation extends HashMap<String,Troolean>
    * Dummy UID
    */
   private static final long serialVersionUID = 1L;
+  
+  @Override
+  public int hashCode()
+  {
+    return super.hashCode();
+  }
+  
+  @Override
+  public boolean equals(Object o)
+  {
+    if (o == null || !(o instanceof Valuation))
+    {
+      return false;
+    }
+    Valuation v = (Valuation) o;
+    if (v.size() != size())
+    {
+      return false;
+    }
+    for (Map.Entry<String,Troolean> e : entrySet())
+    {
+      String k = e.getKey();
+      if (!v.containsKey(k) || e.getValue() != v.get(k))
+      {
+        return false;
+      }
+    }
+    return true;
+  }
 }

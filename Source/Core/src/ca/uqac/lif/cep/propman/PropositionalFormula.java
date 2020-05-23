@@ -17,9 +17,11 @@
  */
 package ca.uqac.lif.cep.propman;
 
+import ca.uqac.lif.cep.functions.Function;
 import ca.uqac.lif.cep.functions.FunctionException;
 import ca.uqac.lif.cep.functions.FunctionTree;
 import ca.uqac.lif.cep.ltl.Troolean;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -46,25 +48,36 @@ public class PropositionalFormula extends FunctionTree
   }
   
   /**
-   * Determines if the current formula supports another propositional formula.
-   * @param phi The other formula
-   * @return <tt>true</tt> if it supports it; <tt>false</tt> otherwise
+   * Gets the set of propositional variables contained in this formula
+   * @return The set of variable names
    */
-  public boolean supports(/*@ non_null @*/ PropositionalFormula phi)
+  public Set<String> getDomain()
   {
-    Set<Valuation> this_rel = getOptimalRelaxations();
-    Set<Valuation> phi_rel = phi.getOptimalRelaxations();
-    // TODO!
-    return false;
+    Set<String> domain = new HashSet<String>();
+    fetchDomain(this, domain);
+    return domain;
   }
   
   /**
-   * Computes the set of optimal relaxations of this propositional formula.
-   * @return The set of relaxations
+   * Recursively fetches the name of all propositional variables in a
+   * propositional formula
+   * @param f The formula
+   * @param domain A pre-initialized set that where variable names are
+   * added
    */
-  /*@ non_null @*/ protected Set<Valuation> getOptimalRelaxations()
+  protected static void fetchDomain(Function f, Set<String> domain)
   {
-    // TODO!
-    return null;
+    if (f instanceof PropositionalVariable)
+    {
+      domain.add(((PropositionalVariable) f).m_varName);
+    }
+    else if (f instanceof PropositionalFormula)
+    {
+      PropositionalFormula pf = (PropositionalFormula) f;
+      for (Function fc : pf.m_children)
+      {
+        fetchDomain(fc, domain);
+      }  
+    }
   }
 }
