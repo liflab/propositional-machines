@@ -17,7 +17,6 @@
  */
 package ca.uqac.lif.cep.propman;
 
-import ca.uqac.lif.cep.Processor;
 import ca.uqac.lif.cep.SynchronousProcessor;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -127,7 +126,7 @@ public class PropositionalMachine extends SynchronousProcessor
   }
 
   @Override
-  public Processor duplicate(boolean with_state)
+  public PropositionalMachine duplicate(boolean with_state)
   {
     // TODO Let's do this later
     throw new UnsupportedOperationException("Not implemented yet");

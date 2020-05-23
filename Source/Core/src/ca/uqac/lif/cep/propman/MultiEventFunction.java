@@ -21,7 +21,8 @@ package ca.uqac.lif.cep.propman;
 import ca.uqac.lif.cep.functions.UnaryFunction;
 
 /**
- * A function that turns a multi-event into another multi-event.
+ * A function that turns a multi-event into another multi-event. This function
+ * may return <tt>null</tt> to represent that a machine emits no output.
  * @author Sylvain Hallé, Rania Taleb
  */
 public abstract class MultiEventFunction extends UnaryFunction<MultiEvent,MultiEvent>

@@ -37,7 +37,7 @@ public class ValuationIterator implements Iterator<Valuation>
   /**
    * The array of values given to each variable
    */
-  protected Troolean[] m_vector;
+  protected Troolean.Value[] m_vector;
   
   /**
    * Whether the iterator is done enumerating valuations
@@ -59,7 +59,7 @@ public class ValuationIterator implements Iterator<Valuation>
   {
     super();
     m_variables = new String[domain.size()];
-    m_vector = new Troolean[m_variables.length];
+    m_vector = new Troolean.Value[m_variables.length];
     int i = 0;
     for (String s : domain)
     {
@@ -67,7 +67,7 @@ public class ValuationIterator implements Iterator<Valuation>
     }
     for (i = 0; i < m_variables.length; i++)
     {
-      m_vector[i] = Troolean.FALSE;
+      m_vector[i] = Troolean.Value.FALSE;
     }
     m_done = false;
     m_update = false;
@@ -80,14 +80,14 @@ public class ValuationIterator implements Iterator<Valuation>
     {
       for (int i = 0; i < m_vector.length; i++)
       {
-        if (m_vector[i] == Troolean.FALSE)
+        if (m_vector[i] == Troolean.Value.FALSE)
         {
-          m_vector[i] = Troolean.TRUE;
+          m_vector[i] = Troolean.Value.TRUE;
           break;
         }
         else
         {
-          m_vector[i] = Troolean.FALSE;
+          m_vector[i] = Troolean.Value.FALSE;
           if (i == m_vector.length - 1)
           {
             m_done = true;

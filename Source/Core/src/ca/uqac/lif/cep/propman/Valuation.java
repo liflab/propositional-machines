@@ -15,7 +15,6 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package ca.uqac.lif.cep.propman;
 
 import ca.uqac.lif.cep.ltl.Troolean;
@@ -25,7 +24,7 @@ import java.util.Map;
 /**
  * A map between variable names and ternary Boolean values (i.e. Trooleans).
  */
-public class Valuation extends HashMap<String,Troolean>
+public class Valuation extends HashMap<String,Troolean.Value>
 {
   /**
    * Dummy UID
@@ -50,7 +49,7 @@ public class Valuation extends HashMap<String,Troolean>
     {
       return false;
     }
-    for (Map.Entry<String,Troolean> e : entrySet())
+    for (Map.Entry<String,Troolean.Value> e : entrySet())
     {
       String k = e.getKey();
       if (!v.containsKey(k) || e.getValue() != v.get(k))
