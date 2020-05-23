@@ -55,6 +55,15 @@ public class PropositionalMachine extends SynchronousProcessor
   }
   
   /**
+   * Gets the number associated to the initial state of the machine
+   * @return The number of the initial state
+   */
+  public int getInitialState()
+  {
+    return m_initialState;
+  }
+  
+  /**
    * Adds a transition to the machine
    * @param source The source state of the transition
    * @param t The transition
@@ -123,6 +132,20 @@ public class PropositionalMachine extends SynchronousProcessor
     outputs.add(new Object[] {output_event});
     m_state = to_take.getDestination();
     return true;
+  }
+  
+  /**
+   * Gets all the outgoing transitions from a given state
+   * @param state The state
+   * @return A list of transitions; may be empty, but never null
+   */
+  /*@ non_null @*/ public List<Transition> getTransitionsFor(int state)
+  {
+    if (!m_delta.containsKey(state))
+    {
+      return new ArrayList<Transition>(0);
+    }
+    return m_delta.get(state);
   }
 
   @Override
