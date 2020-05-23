@@ -15,49 +15,40 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package ca.uqac.lif.cep.propman;
 
-import ca.uqac.lif.cep.ltl.Troolean;
-import java.util.HashMap;
-import java.util.Map; 
+import ca.uqac.lif.cep.Processor;
+import ca.uqac.lif.cep.SynchronousProcessor;
+import java.util.Queue;
 
-/**
- * A map between variable names and ternary Boolean values (i.e. Trooleans).
- */
-public class Valuation extends HashMap<String,Troolean>
+public class PropositionalMachine extends SynchronousProcessor
 {
   /**
-   * Dummy UID
+   * An index to the current state
    */
-  private static final long serialVersionUID = 1L;
+  protected int m_state;
   
-  @Override
-  public int hashCode()
+  
+  
+  /**
+   * Creates a new empty propositional machine
+   */
+  public PropositionalMachine()
   {
-    return super.hashCode();
+    super(1, 1);
   }
-  
+
   @Override
-  public boolean equals(Object o)
+  protected boolean compute(Object[] inputs, Queue<Object[]> outputs)
   {
-    if (o == null || !(o instanceof Valuation))
-    {
-      return false;
-    }
-    Valuation v = (Valuation) o;
-    if (v.size() != size())
-    {
-      return false;
-    }
-    for (Map.Entry<String,Troolean> e : entrySet())
-    {
-      String k = e.getKey();
-      if (!v.containsKey(k) || e.getValue() != v.get(k))
-      {
-        return false;
-      }
-    }
-    return true;
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public Processor duplicate(boolean with_state)
+  {
+    // TODO Let's do this later
+    throw new UnsupportedOperationException("Not implemented yet");
   }
 }
