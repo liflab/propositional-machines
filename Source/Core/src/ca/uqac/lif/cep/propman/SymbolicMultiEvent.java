@@ -30,6 +30,16 @@ import java.util.Set;
 public class SymbolicMultiEvent implements MultiEvent
 {
   /**
+   * Static reference ot the symbolic multi-event that contains all valuations
+   */
+  public static final transient All ALL = new All();
+  
+  /**
+   * Static reference ot the symbolic multi-event that contains no valuation
+   */
+  public static final transient Nothing NOTHING = new Nothing();
+  
+  /**
    * The propositional formula in this symbolic multi-event
    */
   protected PropositionalFormula m_formula;
@@ -129,5 +139,27 @@ public class SymbolicMultiEvent implements MultiEvent
       }
     }
     return false;
+  }
+  
+  /**
+   * Multi-event that contains all valuations
+   */
+  protected static class All extends SymbolicMultiEvent
+  {
+    public All()
+    {
+      super(new PropositionalFormula(Troolean.TRUE));
+    }
+  }
+
+  /**
+   * Multi-event that contains no valuation
+   */
+  protected static class Nothing extends SymbolicMultiEvent
+  {
+    public Nothing()
+    {
+      super(new PropositionalFormula(Troolean.FALSE));
+    }
   }
 }

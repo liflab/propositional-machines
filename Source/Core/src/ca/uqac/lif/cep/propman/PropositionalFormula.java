@@ -32,6 +32,24 @@ import java.util.Set;
 public class PropositionalFormula extends FunctionTree
 {
   /**
+   * Creates a new propositional formula
+   * @param f The function
+   */
+  public PropositionalFormula(Function f)
+  {
+    super(f);
+  }
+  
+  /**
+   * Creates a new propositional formula
+   * @param functions The functions
+   */
+  public PropositionalFormula(Function ... functions)
+  {
+    super(functions);
+  }
+  
+  /**
    * Evaluates a propositional formula on a given valuation.
    * @param v The valuation
    * @return The value of the formula for this valuation

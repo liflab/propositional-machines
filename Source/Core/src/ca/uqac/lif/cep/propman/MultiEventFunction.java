@@ -15,7 +15,6 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package ca.uqac.lif.cep.propman;
 
 import ca.uqac.lif.cep.functions.UnaryFunction;
@@ -27,8 +26,63 @@ import ca.uqac.lif.cep.functions.UnaryFunction;
  */
 public abstract class MultiEventFunction extends UnaryFunction<MultiEvent,MultiEvent>
 {
+  /**
+   * Creates a new instance of the function
+   */
   public MultiEventFunction()
   {
     super(MultiEvent.class, MultiEvent.class);
+  }
+  
+  /**
+   * Function that returns the same multi-event for all its inputs.
+   */
+  public static class EmitConstant extends MultiEventFunction
+  {
+    /**
+     * The multi-event to return
+     */
+    protected MultiEvent m_constant;
+    
+    /**
+     * Creates a new constant multi-event function
+     * @param e The multi-event to return
+     */
+    public EmitConstant(MultiEvent e)
+    {
+      super();
+      m_constant = e;
+    }
+
+    @Override
+    public MultiEvent getValue(MultiEvent x)
+    {
+      return m_constant;
+    }
+  }
+  
+  /**
+   * Function that makes no change to the input multi-event.
+   */
+  public static class Identity extends MultiEventFunction
+  {
+    /**
+     * Reference to a single publicly visible instance of the function
+     */
+    public static final transient Identity instance = new Identity();
+    
+    /**
+     * Creates a new instance of the function
+     */
+    protected Identity()
+    {
+      super();
+    }
+
+    @Override
+    public MultiEvent getValue(MultiEvent x)
+    {
+      return x;
+    }
   }
 }

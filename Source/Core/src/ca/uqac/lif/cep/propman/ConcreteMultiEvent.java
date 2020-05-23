@@ -15,7 +15,6 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package ca.uqac.lif.cep.propman;
 
 import ca.uqac.lif.cep.ltl.Troolean;
@@ -40,6 +39,17 @@ public class ConcreteMultiEvent implements MultiEvent
   {
     super();
     m_valuations = new HashSet<Valuation>();
+  }
+  
+  /**
+   * Creates a new empty concrete multi-event with a given set of valuations
+   * @param valuations The set of valuations contained in this multi-event
+   */
+  public ConcreteMultiEvent(Set<Valuation> valuations)
+  {
+    super();
+    m_valuations = new HashSet<Valuation>(valuations.size());
+    m_valuations.addAll(valuations);
   }
 
   @Override
