@@ -39,6 +39,6 @@ public class AccessControlledMonitor extends GroupProcessor
     super(1, 1);
     Connector.connect(proxy, monitor);
     associateInput(INPUT, proxy, INPUT);
-    associateOutput(OUTPUT, monitor, OUTPUT);
+    associateOutput(OUTPUT, new MultiMonitor(monitor), OUTPUT);
   }
 }
