@@ -37,11 +37,11 @@ public class PropositionalMachineTest
   {
     String[] variables = new String[] {"a", "b", "c"};
     MultiEventFactory factory = new MultiEventFactory(variables);
-    MultiEventFunction f = new BlurVariable("a");
+    MultiEventFunction f = new MergeVariables("a", "b");
     PropositionalMachine machine = new PropositionalMachine();
     machine.addTransition(1, new Transition(2, factory.readFromValuations("TFF"), f));
     machine.addTransition(1, new TransitionOtherwise(1, Identity.instance));
-    machine.addTransition(1, new Transition(2, factory.readFromValuations("FTF"), f));
+    machine.addTransition(2, new Transition(1, factory.readFromValuations("FTF"), f));
     machine.addTransition(2, new TransitionOtherwise(2, Identity.instance));
     SinkLast sink = new SinkLast();
     Connector.connect(machine, sink);
@@ -61,7 +61,27 @@ public class PropositionalMachineTest
     assertEquals(2, vals.size());
     assertTrue(vals.contains(Valuation.readFromString("TFF", variables)));
     assertTrue(vals.contains(Valuation.readFromString("FTF", variables)));
+    // Push event FTF
+    p.push(factory.readFromValuations("FTF"));
+    e = (ConcreteMultiEvent) sink.getLast()[0];
+    vals = e.getValuations();
+    assertEquals(2, vals.size());
+    assertTrue(vals.contains(Valuation.readFromString("TFF", variables)));
+    assertTrue(vals.contains(Valuation.readFromString("FTF", variables)));
+    // Push event FFT
+    p.push(factory.readFromValuations("FFT"));
+    e = (ConcreteMultiEvent) sink.getLast()[0];
+    vals = e.getValuations();
+    assertEquals(1, vals.size());
+    assertTrue(vals.contains(Valuation.readFromString("FFT", variables)));
+    // Push event TFF
+    p.push(factory.readFromValuations("TFF"));
+    e = (ConcreteMultiEvent) sink.getLast()[0];
+    vals = e.getValuations();
+    assertEquals(2, vals.size());
+    assertTrue(vals.contains(Valuation.readFromString("TFF", variables)));
+    assertTrue(vals.contains(Valuation.readFromString("FTF", variables)));
     System.out.println(e);
-    
+
   }
 }
