@@ -51,6 +51,17 @@ public class ConcreteMultiEvent implements MultiEvent
     m_valuations = new HashSet<Valuation>(valuations.size());
     m_valuations.addAll(valuations);
   }
+  
+  /**
+   * Creates a new empty concrete multi-event with a given valuation
+   * @param valuation The single valuation contained in this multi-event
+   */
+  public ConcreteMultiEvent(Valuation valuation)
+  {
+    super();
+    m_valuations = new HashSet<Valuation>(1);
+    m_valuations.add(valuation);
+  }
 
   @Override
   public Set<Valuation> getValuations()
