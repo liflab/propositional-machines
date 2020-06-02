@@ -118,4 +118,35 @@ public class ConcreteMultiEvent implements MultiEvent
     }
     return false;
   }
+  
+  @Override
+  public String toString()
+  {
+    return m_valuations.toString();
+  }
+  
+  /**
+   * Prints a multi-event as a list of valuations
+   * @param variables The order in which the variables must be enumerated
+   * @return The string corresponding to the multi-event
+   */
+  @Override
+  public String toString(String ... variables)
+  {
+    StringBuilder out = new StringBuilder();
+    boolean first = true;
+    for (Valuation v : m_valuations)
+    {
+      if (first)
+      {
+        first = false;
+      }
+      else
+      {
+        out.append(",");
+      }
+      out.append(v.toString(variables));
+    }
+    return out.toString();
+  }
 }

@@ -82,6 +82,7 @@ public class PropositionalMachine extends SynchronousProcessor
       list = m_delta.get(source);
     }
     list.add(t);
+    m_delta.put(source, list);
     return this;
   }
 
