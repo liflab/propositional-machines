@@ -15,12 +15,10 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package ca.uqac.lif.cep.propman;
 
 import ca.uqac.lif.cep.ltl.Troolean;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -72,7 +70,7 @@ public class SymbolicMultiEvent implements MultiEvent
   }
 
   @Override
-  public HashSet<Valuation> getValuations()
+  public Set<Valuation> getValuations()
   {
     Set<String> domain = getDomain();
     HashSet<Valuation> valuations = new HashSet<Valuation>();
@@ -89,7 +87,7 @@ public class SymbolicMultiEvent implements MultiEvent
   }
 
   @Override
-  public Valuation[] intersects(MultiEvent e)
+  public Set<Valuation> getIntersection(MultiEvent e)
   {
     if (e instanceof ConcreteMultiEvent)
     {
@@ -108,11 +106,9 @@ public class SymbolicMultiEvent implements MultiEvent
    * @param e The other multi-event
    * @return <tt>true</tt> if they intersect, <tt>false</tt> otherwise
    */
-  protected Valuation[] intersectsWith(SymbolicMultiEvent e)
+  protected Set<Valuation> intersectsWith(SymbolicMultiEvent e)
   {
-	//int count =0;
-    Valuation[] common_valuations = new Valuation[this.getValuations().size()];
-    int i =0;
+    Set<Valuation> common_valuations = new HashSet<Valuation>();
     Set<String> domain = getDomain();
     domain.addAll(e.getDomain());
     ValuationIterator it = new ValuationIterator(domain);
@@ -121,8 +117,7 @@ public class SymbolicMultiEvent implements MultiEvent
       Valuation v = it.next();
       if (e.m_formula.evaluate(v) == Troolean.Value.TRUE && m_formula.evaluate(v) == Troolean.Value.TRUE)
       {
-        common_valuations[i] = v;
-        i++;
+        common_valuations.add(v);
       }
     }
     return common_valuations;
@@ -134,19 +129,15 @@ public class SymbolicMultiEvent implements MultiEvent
    * @param e The other multi-event
    * @return <tt>true</tt> if they intersect, <tt>false</tt> otherwise
    */
-  protected Valuation[] intersectsWith(ConcreteMultiEvent e)
+  protected Set<Valuation> intersectsWith(ConcreteMultiEvent e)
   {
-	//int count =0;
     Set<Valuation> vals = e.getValuations();
-    Valuation[] common_valuations = new Valuation[this.getValuations().size()];
-    int i =0;
-    
+    Set<Valuation> common_valuations = new HashSet<Valuation>();
     for (Valuation v : vals)
     {
       if (m_formula.evaluate(v) == Troolean.Value.TRUE)
       {
-        common_valuations[i] =v;
-        i++;
+        common_valuations.add(v);
       }
     }
     return common_valuations;

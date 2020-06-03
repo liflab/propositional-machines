@@ -32,7 +32,7 @@ public class ConcreteMultiEvent implements MultiEvent
    * The set of valuations contained in this multi-event
    */
   protected Set<Valuation> m_valuations;
-  
+
   /**
    * Creates a new empty concrete multi-event
    */
@@ -41,7 +41,7 @@ public class ConcreteMultiEvent implements MultiEvent
     super();
     m_valuations = new HashSet<Valuation>();
   }
-  
+
   /**
    * Creates a new empty concrete multi-event with a given set of valuations
    * @param valuations The set of valuations contained in this multi-event
@@ -52,7 +52,7 @@ public class ConcreteMultiEvent implements MultiEvent
     m_valuations = new HashSet<Valuation>(valuations.size());
     m_valuations.addAll(valuations);
   }
-  
+
   /**
    * Creates a new empty concrete multi-event with a given valuation
    * @param valuation The single valuation contained in this multi-event
@@ -69,7 +69,7 @@ public class ConcreteMultiEvent implements MultiEvent
   {
     return m_valuations;
   }
-  
+
   @Override
   public Set<String> getDomain()
   {
@@ -81,7 +81,7 @@ public class ConcreteMultiEvent implements MultiEvent
   }
 
   @Override
-  public Valuation[] intersects(MultiEvent e)
+  public Set<Valuation> getIntersection(MultiEvent e)
   {
     if (e instanceof ConcreteMultiEvent)
     {
@@ -93,59 +93,52 @@ public class ConcreteMultiEvent implements MultiEvent
     }
     return null;
   }
-  
+
   /**
    * Determines if this multi-event intersects with another concrete
    * multi-event.
    * @param e The other multi-event
    * @return <tt>int</tt> if they intersect, <tt>0</tt> otherwise
    */
-  protected Valuation[] intersectsWith(ConcreteMultiEvent e)
+  protected Set<Valuation> intersectsWith(ConcreteMultiEvent e)
   {
-	  //int count =0;
-	Valuation[] common_valuations = new Valuation[this.getValuations().size()];
-	int i =0;
-
+    Set<Valuation> common_valuations = new HashSet<Valuation>();
     for (Valuation v : m_valuations)
     {
       if (e.m_valuations.contains(v))
       {
-        common_valuations[i] =v;
-        i++;
+        common_valuations.add(v);
       }
     }
     return common_valuations;
   }
-  
+
   /**
    * Determines if this multi-event intersects with another symbolic
    * multi-event.
    * @param e The other multi-event
    * @return <tt>int</tt> if they intersect, <tt>0</tt> otherwise
    */
-  protected Valuation[] intersectsWith(SymbolicMultiEvent e)
+  protected Set<Valuation> intersectsWith(SymbolicMultiEvent e)
   {
-	//int count = 0;
-	Valuation[] common_valuations = new Valuation[this.getValuations().size()];
-	int i= 0;
+    Set<Valuation> common_valuations = new HashSet<Valuation>();
     PropositionalFormula f = e.getFormula();
     for (Valuation v : m_valuations)
     {
       if (f.evaluate(v) == Troolean.Value.TRUE)
       {
-        common_valuations[i] =v;
-        i++;
+        common_valuations.add(v);
       }
     }
     return common_valuations;
   }
-  
+
   @Override
   public String toString()
   {
     return m_valuations.toString();
   }
-  
+
   /**
    * Prints a multi-event as a list of valuations
    * @param variables The order in which the variables must be enumerated

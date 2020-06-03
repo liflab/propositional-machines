@@ -75,13 +75,10 @@ public class MultiMonitor extends SynchronousProcessor
     VerdictCount beta = new VerdictCount();
     PathCount sigma_prime = new PathCount();
     MultiEvent input_event = (MultiEvent) inputs[0];
-    Set<Valuation> to_evaluate = new HashSet<Valuation>(); // will store all the valuations of the
-                                                           // multi-event input
-
+    Set<Valuation> to_evaluate = new HashSet<Valuation>(); // will store all the valuations of the multi-event input
+    to_evaluate.addAll(input_event.getValuations());
     for (Entry<Integer, Integer> sigma_state : m_sigma.entrySet())
     { // iterating on each state of m_sigma
-
-      to_evaluate = input_event.getValuations();
       List<PropositionalMachine.Transition> outgoing_edges = new ArrayList<PropositionalMachine.Transition>();
       outgoing_edges = m_monitor.getTransitionsFor(sigma_state.getKey());
       PropositionalMachine.Transition otherwise = null;
@@ -98,28 +95,26 @@ public class MultiMonitor extends SynchronousProcessor
         else // if it is not an otherwise transition, we test if we can check it or not
         {
           MultiEvent condition = t.getCondition();
-          Valuation[] common_valuations = new Valuation[condition.getValuations().size()];
-          common_valuations = input_event.intersects(condition);
-          if (common_valuations.length > 0)// valuations that take this transition will not take any
+          Set<Valuation> common_valuations = input_event.getIntersection(condition);
+          if (common_valuations.size() > 0)// valuations that take this transition will not take any
                                            // other transition because the monitor is deterministic
           {
             // add the new state to sigma_prime
             if (sigma_prime.containsKey(t.getDestination()))
             {
               paths = sigma_prime.get(t.getDestination())
-                  + sigma_state.getValue() * common_valuations.length;
+                  + sigma_state.getValue() * common_valuations.size();
               sigma_prime.put(t.getDestination(), paths);
             }
             else
             {
-              paths = sigma_state.getValue() * common_valuations.length;
+              paths = sigma_state.getValue() * common_valuations.size();
               sigma_prime.put(t.getDestination(), paths);
             }
 
             // get the value of the output (verdict) on this transition + update beta
             MultiEventFunction f = t.getFunction();
             MultiEvent output_event = f.getValue(input_event);
-            outputs.add(new Object[] { output_event });
 
             // beta increment ..
             if (output_event instanceof SymbolicMultiEvent.All)
@@ -139,9 +134,9 @@ public class MultiMonitor extends SynchronousProcessor
             // remove the common valuations that are evaluated, the remaining non-evaluated
             // valuations will either go through another outgoing transition or take the
             // otherwise transition
-            for (int i = 0; i < common_valuations.length; i++)
+            for (Valuation v : common_valuations)
             {
-              to_evaluate.remove(common_valuations[i]);
+              to_evaluate.remove(v);
             }
           }
         }
@@ -167,7 +162,6 @@ public class MultiMonitor extends SynchronousProcessor
         // get the value of the output (verdict) + update beta
         MultiEventFunction f = otherwise.getFunction();
         MultiEvent output_event = f.getValue(input_event);
-        outputs.add(new Object[] { output_event });
 
         // beta increment ..
         if (output_event instanceof SymbolicMultiEvent.All)
@@ -196,6 +190,7 @@ public class MultiMonitor extends SynchronousProcessor
     { // i.e. if nothing is removed from to_evaluate set
       return false;
     }
+    outputs.add(new Object[] {beta});
     return true;
   } // end of compute
 

@@ -37,7 +37,7 @@ public interface MultiEvent
    * @return <tt>int != 0</tt> if they have common valuations,
    * <tt>0</tt> otherwise
    */
-  public Valuation[] intersects(MultiEvent e);
+  public Set<Valuation> getIntersection(MultiEvent e);
   
   /**
    * Gets the domain of this multi-event, i.e. the set of all propositional

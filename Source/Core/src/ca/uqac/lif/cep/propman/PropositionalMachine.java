@@ -98,7 +98,6 @@ public class PropositionalMachine extends SynchronousProcessor
     List<Transition> transitions = new ArrayList<Transition>();
     transitions = m_delta.get(m_state);
     Transition candidate = null, otherwise = null, to_take = null;
-    int count = 0;
     for (Transition t : transitions)
     {
       if (t instanceof TransitionOtherwise)
@@ -108,7 +107,7 @@ public class PropositionalMachine extends SynchronousProcessor
       else
       {
         MultiEvent condition = t.getCondition();
-        if (input_event.intersects(condition).length> 0)
+        if (input_event.getIntersection(condition).size() > 0)
         {
           // This happens at most once if the machine is deterministic
           candidate = t;
@@ -132,7 +131,10 @@ public class PropositionalMachine extends SynchronousProcessor
     // Produce output event and update state
     MultiEventFunction f = to_take.getFunction();
     MultiEvent output_event = f.getValue(input_event);
-    outputs.add(new Object[] {output_event});
+    if (output_event != null)
+    {
+      outputs.add(new Object[] {output_event});
+    }
     m_state = to_take.getDestination();
     return true;
   }
