@@ -32,6 +32,7 @@ import java.util.Set;
 /**
  * A multi-monitor lifted from a uni-monitor expressed as a propositional
  * machine.
+ * 
  * @author Sylvain Hallé, Rania Taleb
  */
 public class MultiMonitor extends SynchronousProcessor
@@ -39,23 +40,25 @@ public class MultiMonitor extends SynchronousProcessor
   /**
    * The uni-monitor from which the multi-monitor is lifted
    */
-  /*@ non_null @*/ protected PropositionalMachine m_monitor;
-  
+  /* @ non_null @ */ protected PropositionalMachine m_monitor;
+
   /**
-   * An association between uni-monitor states and a number of paths 
+   * An association between uni-monitor states and a number of paths
    */
   protected PathCount m_sigma;
-  
+
   /**
-   * An association between uni-monitor verdicts and a number of paths 
+   * An association between uni-monitor verdicts and a number of paths
    */
   protected VerdictCount m_verdicts;
 
   /**
-   * Creates a new multi-monitor lifted from a uni-monitor 
-   * @param monitor The uni-monitor
+   * Creates a new multi-monitor lifted from a uni-monitor
+   * 
+   * @param monitor
+   *          The uni-monitor
    */
-  public MultiMonitor(/*@ non_null @*/ PropositionalMachine monitor)
+  public MultiMonitor(/* @ non_null @ */ PropositionalMachine monitor)
   {
     super(1, 1);
     m_monitor = monitor;
@@ -64,116 +67,138 @@ public class MultiMonitor extends SynchronousProcessor
     m_sigma.put(m_monitor.getInitialState(), 1);
     m_verdicts = new VerdictCount();
   }
-  
+
   @Override
-  protected boolean compute(Object[] inputs, Queue<Object[]> outputs)// input: 1 multiEvent --- output: verdicts and sigma
+  protected boolean compute(Object[] inputs, Queue<Object[]> outputs)// input: 1 multiEvent ---
+                                                                     // output: verdicts and sigma
   {
     VerdictCount beta = new VerdictCount();
     PathCount sigma_prime = new PathCount();
     MultiEvent input_event = (MultiEvent) inputs[0];
-    Set<Valuation> to_evaluate = new HashSet<Valuation>(); //will store all the valuations of the multi-event input
-   
-    
-    for (Entry<Integer, Integer> sigma_state : m_sigma.entrySet()) { //iterating on each state of m_sigma
-    	
-    	to_evaluate = input_event.getValuations();
-    	List<PropositionalMachine.Transition> outgoing_edges = new ArrayList<PropositionalMachine.Transition>();
-    	outgoing_edges =  m_monitor.getTransitionsFor(sigma_state.getKey());
-    	PropositionalMachine.Transition otherwise = null;
-    	
-    	//iterate through the outgoing transitions of a state in m_sigma
-    	for(PropositionalMachine.Transition t: outgoing_edges){ 
-    		
-    		int paths =0;
-    		if (t instanceof TransitionOtherwise)
-    	      {
-    	        otherwise = t;
-    	      }
-    	    else //if it is not an otherwise transition, we test if we can check it or not
-    	      {
-    	        MultiEvent condition = t.getCondition();
-    	        Valuation[] common_valuations = new Valuation[condition.getValuations().size()];
-    	        common_valuations = input_event.intersects(condition);
-    	        if (common_valuations.length > 0)// valuations that take this transition will not take any other transition because the monitor is deterministic
-    	        {
-    	          //add the new state to sigma_prime 
-    	        	if (sigma_prime.containsKey(t.getDestination())){
-    	        		 paths = sigma_prime.get(t.getDestination())+ sigma_state.getValue()*common_valuations.length;
-    	        	     sigma_prime.put(t.getDestination(),paths);
-    	        	}
-    	        	else{
-    	        		 paths =sigma_state.getValue()*common_valuations.length;
-    	        	     sigma_prime.put(t.getDestination(),paths);
-    	        	}
-        	     
-        	     //get the value of the output (verdict) on this transition + update beta
-        	     MultiEventFunction f = t.getFunction();
-     	         MultiEvent output_event = f.getValue(input_event);
-     	         outputs.add(new Object[] {output_event});
-     	         
-     	         //beta increment ..
-     	         if(output_event instanceof SymbolicMultiEvent.All){
-     	        	 beta.increment(Troolean.Value.TRUE, paths);
-     	         }
-     	         
-     	         if(output_event instanceof SymbolicMultiEvent.Nothing){
-    	        	 beta.increment(Troolean.Value.FALSE, paths);
-    	         } 
-     	         else{
-    	        	 beta.increment(Troolean.Value.INCONCLUSIVE, paths);
-     	         }
-     	         
-     	         //remove the common valuations that are evaluated, the remaining non-evaluated valuations will either go through another outgoing transition or take the otherwise transition
-     	        for(int i=0; i<common_valuations.length; i++){
-     	        	to_evaluate.remove(common_valuations[i]);
-     	        }
-    	        }
-    	      }	       	
-    	} // end of outgoing transitions from one sigma state
+    Set<Valuation> to_evaluate = new HashSet<Valuation>(); // will store all the valuations of the
+                                                           // multi-event input
 
-    	
-    	//the remaining valuations in the set to_evaluate that did not take any transition will take the otherwise transition
-    	if (otherwise != null){
-    		int paths = 0;
-    		if (sigma_prime.containsKey(otherwise.getDestination())){
-    			paths = sigma_prime.get(otherwise.getDestination())+ sigma_state.getValue()*to_evaluate.size();
-       	        sigma_prime.put(otherwise.getDestination(),paths);
-         	}
-       	    else{
-       	    	paths = sigma_state.getValue()*to_evaluate.size();
-       	        sigma_prime.put(otherwise.getDestination(),paths);
-         	} 
-    		
-    	 //get the value of the output (verdict) + update beta
-    		MultiEventFunction f = otherwise.getFunction();
- 	        MultiEvent output_event = f.getValue(input_event);
- 	        outputs.add(new Object[] {output_event});
- 	        
- 	     //beta increment ..
-	         if(output_event instanceof SymbolicMultiEvent.All){
-	        	 beta.increment(Troolean.Value.TRUE, paths);
-	         }
-	         
-	         if(output_event instanceof SymbolicMultiEvent.Nothing){
-	        	 beta.increment(Troolean.Value.FALSE, paths);
-	         } 
-	         else{
-	        	 beta.increment(Troolean.Value.INCONCLUSIVE, paths);
-	         }
-    	}           	
-	} // end of states in m_sigma
-    
-    //update sigma and beta of the monitor
+    for (Entry<Integer, Integer> sigma_state : m_sigma.entrySet())
+    { // iterating on each state of m_sigma
+
+      to_evaluate = input_event.getValuations();
+      List<PropositionalMachine.Transition> outgoing_edges = new ArrayList<PropositionalMachine.Transition>();
+      outgoing_edges = m_monitor.getTransitionsFor(sigma_state.getKey());
+      PropositionalMachine.Transition otherwise = null;
+
+      // iterate through the outgoing transitions of a state in m_sigma
+      for (PropositionalMachine.Transition t : outgoing_edges)
+      {
+
+        int paths = 0;
+        if (t instanceof TransitionOtherwise)
+        {
+          otherwise = t;
+        }
+        else // if it is not an otherwise transition, we test if we can check it or not
+        {
+          MultiEvent condition = t.getCondition();
+          Valuation[] common_valuations = new Valuation[condition.getValuations().size()];
+          common_valuations = input_event.intersects(condition);
+          if (common_valuations.length > 0)// valuations that take this transition will not take any
+                                           // other transition because the monitor is deterministic
+          {
+            // add the new state to sigma_prime
+            if (sigma_prime.containsKey(t.getDestination()))
+            {
+              paths = sigma_prime.get(t.getDestination())
+                  + sigma_state.getValue() * common_valuations.length;
+              sigma_prime.put(t.getDestination(), paths);
+            }
+            else
+            {
+              paths = sigma_state.getValue() * common_valuations.length;
+              sigma_prime.put(t.getDestination(), paths);
+            }
+
+            // get the value of the output (verdict) on this transition + update beta
+            MultiEventFunction f = t.getFunction();
+            MultiEvent output_event = f.getValue(input_event);
+            outputs.add(new Object[] { output_event });
+
+            // beta increment ..
+            if (output_event instanceof SymbolicMultiEvent.All)
+            {
+              beta.increment(Troolean.Value.TRUE, paths);
+            }
+
+            if (output_event instanceof SymbolicMultiEvent.Nothing)
+            {
+              beta.increment(Troolean.Value.FALSE, paths);
+            }
+            else
+            {
+              beta.increment(Troolean.Value.INCONCLUSIVE, paths);
+            }
+
+            // remove the common valuations that are evaluated, the remaining non-evaluated
+            // valuations will either go through another outgoing transition or take the
+            // otherwise transition
+            for (int i = 0; i < common_valuations.length; i++)
+            {
+              to_evaluate.remove(common_valuations[i]);
+            }
+          }
+        }
+      } // end of outgoing transitions from one sigma state
+
+      // the remaining valuations in the set to_evaluate that did not take any
+      // transition will take the otherwise transition
+      if (otherwise != null)
+      {
+        int paths = 0;
+        if (sigma_prime.containsKey(otherwise.getDestination()))
+        {
+          paths = sigma_prime.get(otherwise.getDestination())
+              + sigma_state.getValue() * to_evaluate.size();
+          sigma_prime.put(otherwise.getDestination(), paths);
+        }
+        else
+        {
+          paths = sigma_state.getValue() * to_evaluate.size();
+          sigma_prime.put(otherwise.getDestination(), paths);
+        }
+
+        // get the value of the output (verdict) + update beta
+        MultiEventFunction f = otherwise.getFunction();
+        MultiEvent output_event = f.getValue(input_event);
+        outputs.add(new Object[] { output_event });
+
+        // beta increment ..
+        if (output_event instanceof SymbolicMultiEvent.All)
+        {
+          beta.increment(Troolean.Value.TRUE, paths);
+        }
+
+        if (output_event instanceof SymbolicMultiEvent.Nothing)
+        {
+          beta.increment(Troolean.Value.FALSE, paths);
+        }
+        else
+        {
+          beta.increment(Troolean.Value.INCONCLUSIVE, paths);
+        }
+      }
+    } // end of states in m_sigma
+
+    // update sigma and beta of the monitor
     m_sigma = sigma_prime;
     m_verdicts = beta;
-    
-    //the function will return false if none of the input valuations takes any transition from any state
-    if(to_evaluate.size() == input_event.getValuations().size()){ // i.e. if nothing is removed from to_evaluate set
-    	return false;
+
+    // the function will return false if none of the input valuations takes any
+    // transition from any state
+    if (to_evaluate.size() == input_event.getValuations().size())
+    { // i.e. if nothing is removed from to_evaluate set
+      return false;
     }
     return true;
   } // end of compute
-  
+
   @Override
   public void reset()
   {
@@ -188,22 +213,25 @@ public class MultiMonitor extends SynchronousProcessor
     // TODO Let's do this later
     throw new UnsupportedOperationException("Not implemented yet");
   }
-  
+
   /**
-   * A data structure associating machine states to a number of uni-traces.
-   * This corresponds to the mapping &sigma; in Algorithm 1.
+   * A data structure associating machine states to a number of uni-traces. This
+   * corresponds to the mapping &sigma; in Algorithm 1.
    */
-  protected static class PathCount extends HashMap<Integer,Integer>
+  protected static class PathCount extends HashMap<Integer, Integer>
   {
     /**
      * Dummy UID
      */
     private static final long serialVersionUID = 1L;
-    
+
     /**
      * Increments the number of paths associated to a state
-     * @param state The state
-     * @param paths The number of paths to add
+     * 
+     * @param state
+     *          The state
+     * @param paths
+     *          The number of paths to add
      */
     public void increment(int state, int paths)
     {
@@ -218,10 +246,10 @@ public class MultiMonitor extends SynchronousProcessor
       }
     }
   }
-  
+
   /**
-   * A data structure associating monitor verdicts to a number of uni-traces.
-   * This corresponds to the mapping &beta; in Algorithm 1.
+   * A data structure associating monitor verdicts to a number of uni-traces. This
+   * corresponds to the mapping &beta; in Algorithm 1.
    */
   protected static class VerdictCount
   {
@@ -229,22 +257,24 @@ public class MultiMonitor extends SynchronousProcessor
      * The number of uni-traces leading to the true verdict
      */
     protected int m_numTrue = 0;
-    
+
     /**
      * The number of uni-traces leading to the false verdict
      */
     protected int m_numFalse = 0;
-    
+
     /**
      * The number of uni-traces leading to the inconclusive verdict
      */
     protected int m_numInconclusive = 0;
-    
+
     /**
-     * Increments the number of paths associated to a given monitor
-     * verdict
-     * @param v The verdict
-     * @param paths The number of paths to add
+     * Increments the number of paths associated to a given monitor verdict
+     * 
+     * @param v
+     *          The verdict
+     * @param paths
+     *          The number of paths to add
      */
     public void increment(Troolean.Value v, int paths)
     {
@@ -261,10 +291,12 @@ public class MultiMonitor extends SynchronousProcessor
         m_numInconclusive += paths;
       }
     }
-    
+
     /**
      * Gets the number of uni-traces associated to a monitor verdict
-     * @param v The verdict
+     * 
+     * @param v
+     *          The verdict
      * @return The number of traces
      */
     public int get(Troolean.Value v)
