@@ -310,5 +310,13 @@ public class MultiMonitor extends SynchronousProcessor
       }
       return 0; // Not supposed to happen
     }
+    
+    @Override
+    public String toString()
+    {
+      StringBuilder out = new StringBuilder();
+      out.append("{T=").append(m_numTrue).append(",F=").append(m_numFalse).append(",?=").append(m_numInconclusive).append("}");
+      return out.toString();
+    }
   }
 }
