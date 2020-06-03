@@ -31,7 +31,8 @@ import java.util.Set;
 
 /**
  * A multi-monitor lifted from a uni-monitor expressed as a propositional
- * machine.
+ * machine. The uni-monitor must be <strong>deterministic</strong>, i.e.
+ * in any state, an input valuation must fire at most one transition.
  * 
  * @author Sylvain Hallé, Rania Taleb
  */
@@ -136,13 +137,11 @@ public class MultiMonitor extends SynchronousProcessor
               beta.increment(Troolean.Value.INCONCLUSIVE, paths);
             }
 
-            // remove the common valuations that are evaluated, the remaining non-evaluated
-            // valuations will either go through another outgoing transition or take the
-            // otherwise transition
-            for (Valuation v : common_valuations)
-            {
-              to_evaluate.remove(v);
-            }
+            /* Remove the common valuations that are evaluated, the remaining non-evaluated
+               valuations will either go through another outgoing transition or take the
+               otherwise transition. NOTE: this is only valid if the monitor is
+               *deterministic*, i.e. each valuation fires at most one transition. */
+            to_evaluate.removeAll(common_valuations);
           }
         }
       } // end of outgoing transitions from one sigma state
