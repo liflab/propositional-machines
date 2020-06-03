@@ -173,4 +173,10 @@ public class SymbolicMultiEvent implements MultiEvent
       super(new PropositionalFormula(Troolean.FALSE));
     }
   }
+
+  @Override
+  public String toString(String... variables)
+  {
+    return toString();
+  }
 }

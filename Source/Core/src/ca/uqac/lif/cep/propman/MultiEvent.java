@@ -15,7 +15,6 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package ca.uqac.lif.cep.propman;
 
 import java.util.Set;
@@ -46,4 +45,11 @@ public interface MultiEvent
    * @return The set of variable names
    */
   public Set<String> getDomain();
+  
+  /**
+   * Prints the contents of the event by fixing the ordering of variables
+   * @param variables The order in which variables are enumerated
+   * @return The string rendition of the multi-event
+   */
+  public String toString(String ... variables);
 }

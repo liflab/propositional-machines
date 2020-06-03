@@ -34,7 +34,19 @@ public class Valuation extends HashMap<String,Troolean.Value>
   @Override
   public int hashCode()
   {
-    return super.hashCode();
+    int h = 0;
+    for (Map.Entry<String,Troolean.Value> e : entrySet())
+    {
+      if (e.getValue() == Troolean.Value.TRUE)
+      {
+        h++;
+      }
+      if (e.getValue() == Troolean.Value.INCONCLUSIVE)
+      {
+        h += 2;
+      }
+    }
+    return h;
   }
   
   @Override
@@ -58,5 +70,74 @@ public class Valuation extends HashMap<String,Troolean.Value>
       }
     }
     return true;
+  }
+  
+  /**
+   * Prints a valuation as a list of Boolean values
+   * @param variables The order in which the variables must be enumerated
+   * @return The string corresponding to the valuation
+   */
+  public String toString(String ... variables)
+  {
+    StringBuilder out = new StringBuilder();
+    for (String v : variables)
+    {
+      Troolean.Value b = get(v);
+      if (b == Troolean.Value.TRUE)
+      {
+        out.append("T");
+      }
+      else if (b == Troolean.Value.FALSE)
+      {
+        out.append("F");
+      }
+      else
+      {
+        out.append("?");
+      }
+    }
+    return out.toString();
+  }
+  
+  /**
+   * Reads a valuation from a string
+   * @param v The string to read from 
+   * @param variables The names of the variables, in the order their value
+   * appears in <tt>v</tt>
+   * @return A valuation, or <tt>null</tt> if the string is malformed
+   */
+  public static Valuation readFromString(String v, String ... variables)
+  {
+    if (v.length() != variables.length)
+    {
+      // Incorrect length
+      return null;
+    }
+    Valuation val = new Valuation();
+    for (int i = 0; i < variables.length; i++)
+    {
+      String c = v.substring(i, i+1);
+      val.put(variables[i], getBooleanValue(c));
+    }
+    return val;
+  }
+  
+  /**
+   * Extracts a Boolean value from a character
+   * @param c The character
+   * @return <tt>true</tt> if the character is interpreted as true,
+   * <tt>false</tt> otherwise
+   */
+  protected static Troolean.Value getBooleanValue(String c)
+  {
+    if (c.compareTo("1") == 0 || c.compareToIgnoreCase("T") == 0 || c.compareTo("\u22a4") == 0)
+    {
+      return Troolean.Value.TRUE;
+    }
+    if (c.compareTo("?") == 0)
+    {
+      return Troolean.Value.INCONCLUSIVE;
+    }
+    return Troolean.Value.FALSE;
   }
 }

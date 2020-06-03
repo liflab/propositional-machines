@@ -52,6 +52,17 @@ public class ConcreteMultiEvent implements MultiEvent
     m_valuations = new HashSet<Valuation>(valuations.size());
     m_valuations.addAll(valuations);
   }
+  
+  /**
+   * Creates a new empty concrete multi-event with a given valuation
+   * @param valuation The single valuation contained in this multi-event
+   */
+  public ConcreteMultiEvent(Valuation valuation)
+  {
+    super();
+    m_valuations = new HashSet<Valuation>(1);
+    m_valuations.add(valuation);
+  }
 
   @Override
   public Set<Valuation> getValuations()
@@ -127,5 +138,36 @@ public class ConcreteMultiEvent implements MultiEvent
       }
     }
     return common_valuations;
+  }
+  
+  @Override
+  public String toString()
+  {
+    return m_valuations.toString();
+  }
+  
+  /**
+   * Prints a multi-event as a list of valuations
+   * @param variables The order in which the variables must be enumerated
+   * @return The string corresponding to the multi-event
+   */
+  @Override
+  public String toString(String ... variables)
+  {
+    StringBuilder out = new StringBuilder();
+    boolean first = true;
+    for (Valuation v : m_valuations)
+    {
+      if (first)
+      {
+        first = false;
+      }
+      else
+      {
+        out.append(",");
+      }
+      out.append(v.toString(variables));
+    }
+    return out.toString();
   }
 }

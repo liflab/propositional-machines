@@ -57,7 +57,7 @@ public class BlurVariable extends MultiEventFunction
     for (Valuation v : vals)
     {
      Valuation v2 = new Valuation();
-     v2.putAll(v2);
+     v2.putAll(v);
      if (v.get(m_variable) == Troolean.Value.TRUE)
      {
        v2.put(m_variable, Troolean.Value.FALSE);

@@ -17,28 +17,34 @@
  */
 package ca.uqac.lif.cep.propman;
 
-import static ca.uqac.lif.cep.Connector.INPUT;
-import static ca.uqac.lif.cep.Connector.OUTPUT;
-
-import ca.uqac.lif.cep.Connector;
-import ca.uqac.lif.cep.GroupProcessor;
-
 /**
- * A monitor made of an access proxy and a uni-monitor.
- * @author Sylvain Hallé, Rania Taleb
+ * Propositional machine whose all transitions loop onto its single state.
+ * This machine is suitable for modeling stateless modifications to an
+ * input event trace.
  */
-public class AccessControlledMonitor extends GroupProcessor
+public class StatelessPropositionalMachine extends PropositionalMachine
 {
   /**
-   * Creates a new acces-controlled monitor.
-   * @param proxy The access proxy
-   * @param monitor The uni-monitor
+   * Creates a new instance of the machine
    */
-  public AccessControlledMonitor(PropositionalMachine proxy, PropositionalMachine monitor)
+  public StatelessPropositionalMachine()
   {
-    super(1, 1);
-    Connector.connect(proxy, monitor);
-    associateInput(INPUT, proxy, INPUT);
-    associateOutput(OUTPUT, new MultiMonitor(monitor), OUTPUT);
+    super();
+  }
+  
+  /**
+   * Adds a condition
+   * @param condition The condition to be applied to the event. Set to
+   * <tt>null</tt> to represent the "otherwise" (star) transition.
+   * @param f The function used to transform the input event into an
+   * output event
+   */
+  public void addCondition(MultiEvent condition, MultiEventFunction f)
+  {
+    if (condition == null)
+    {
+      addTransition(0, new TransitionOtherwise(0, f));
+    }
+    addTransition(0, new Transition(0, condition, f));
   }
 }
