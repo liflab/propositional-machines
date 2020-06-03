@@ -37,8 +37,10 @@ public class AccessControlledMonitor extends GroupProcessor
   public AccessControlledMonitor(PropositionalMachine proxy, PropositionalMachine monitor)
   {
     super(1, 1);
-    Connector.connect(proxy, monitor);
+    MultiMonitor mm = new MultiMonitor(monitor);
+    Connector.connect(proxy, mm);
+    addProcessors(proxy, mm);
     associateInput(INPUT, proxy, INPUT);
-    associateOutput(OUTPUT, new MultiMonitor(monitor), OUTPUT);
+    associateOutput(OUTPUT, mm, OUTPUT);
   }
 }
