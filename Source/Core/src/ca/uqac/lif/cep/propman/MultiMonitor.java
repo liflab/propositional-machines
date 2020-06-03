@@ -172,7 +172,7 @@ public class MultiMonitor extends SynchronousProcessor
     	return false;
     }
     return true;
-  }
+  } // end of compute
   
   @Override
   public void reset()
