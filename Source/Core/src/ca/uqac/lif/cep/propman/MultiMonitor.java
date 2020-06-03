@@ -76,11 +76,12 @@ public class MultiMonitor extends SynchronousProcessor
     VerdictCount beta = new VerdictCount();
     PathCount sigma_prime = new PathCount();
     MultiEvent input_event = (MultiEvent) inputs[0];
-    Set<Valuation> to_evaluate = new HashSet<Valuation>(); // will store all the valuations of the multi-event input
-    to_evaluate.addAll(input_event.getValuations());
     boolean transition_taken = false;
+    Set<Valuation> all_valuations = input_event.getValuations();
     for (Entry<Integer, Integer> sigma_state : m_sigma.entrySet())
     { // iterating on each state of m_sigma
+      Set<Valuation> to_evaluate = new HashSet<Valuation>(); // will store all the valuations of the multi-event input
+      to_evaluate.addAll(all_valuations);
       if (sigma_state.getValue() == 0)
       {
         continue;
@@ -92,7 +93,6 @@ public class MultiMonitor extends SynchronousProcessor
       // iterate through the outgoing transitions of a state in m_sigma
       for (PropositionalMachine.Transition t : outgoing_edges)
       {
-        int paths = 0;
         if (t instanceof TransitionOtherwise)
         {
           otherwise = t;
@@ -106,18 +106,9 @@ public class MultiMonitor extends SynchronousProcessor
           {
             transition_taken = true;
             // add the new state to sigma_prime
-            if (sigma_prime.containsKey(t.getDestination()))
-            {
-              paths = sigma_prime.get(t.getDestination())
-                  + sigma_state.getValue() * common_valuations.size();
-              sigma_prime.put(t.getDestination(), paths);
-            }
-            else
-            {
-              paths = sigma_state.getValue() * common_valuations.size();
-              sigma_prime.put(t.getDestination(), paths);
-            }
-
+            int paths = sigma_state.getValue() * common_valuations.size();
+            sigma_prime.increment(t.getDestination(), paths);
+            
             // get the value of the output (verdict) on this transition + update beta
             MultiEventFunction f = t.getFunction();
             MultiEvent output_event = f.getValue(input_event);
@@ -127,8 +118,7 @@ public class MultiMonitor extends SynchronousProcessor
             {
               beta.increment(Troolean.Value.TRUE, paths);
             }
-
-            if (output_event instanceof SymbolicMultiEvent.Nothing)
+            else if (output_event instanceof SymbolicMultiEvent.Nothing)
             {
               beta.increment(Troolean.Value.FALSE, paths);
             }
@@ -151,18 +141,8 @@ public class MultiMonitor extends SynchronousProcessor
       if (otherwise != null && !to_evaluate.isEmpty())
       {
         transition_taken = true;
-        int paths = 0;
-        if (sigma_prime.containsKey(otherwise.getDestination()))
-        {
-          paths = sigma_prime.get(otherwise.getDestination())
-              + sigma_state.getValue() * to_evaluate.size();
-          sigma_prime.put(otherwise.getDestination(), paths);
-        }
-        else
-        {
-          paths = sigma_state.getValue() * to_evaluate.size();
-          sigma_prime.put(otherwise.getDestination(), paths);
-        }
+        int paths = sigma_state.getValue() * to_evaluate.size();
+        sigma_prime.increment(otherwise.getDestination(), paths);
 
         // get the value of the output (verdict) + update beta
         MultiEventFunction f = otherwise.getFunction();
