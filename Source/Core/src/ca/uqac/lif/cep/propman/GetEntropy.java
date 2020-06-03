@@ -49,6 +49,10 @@ public class GetEntropy extends UnaryFunction<VerdictCount,Number>
   public Number getValue(VerdictCount x)
   {
     long total = x.get(Value.FALSE) + x.get(Value.TRUE) + x.get(Value.INCONCLUSIVE);
+    if (total == 0)
+    {
+      return 0;
+    }
     float p_false = (float) x.get(Value.FALSE) / (float) total;
     float p_true = (float) x.get(Value.TRUE) / (float) total;
     float p_inc = (float) x.get(Value.INCONCLUSIVE) / (float) total;
@@ -63,6 +67,10 @@ public class GetEntropy extends UnaryFunction<VerdictCount,Number>
    */
   protected static double log2(double x)
   {
+    if (x == 0)
+    {
+      return 0;
+    }
     return Math.log(x) / LN2;
   }
 }
