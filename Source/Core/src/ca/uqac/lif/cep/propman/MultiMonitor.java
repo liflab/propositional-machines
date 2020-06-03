@@ -19,6 +19,7 @@ package ca.uqac.lif.cep.propman;
 
 import ca.uqac.lif.cep.SynchronousProcessor;
 import ca.uqac.lif.cep.ltl.Troolean;
+import ca.uqac.lif.cep.propman.MultiEventFunction.EmitConstant;
 import ca.uqac.lif.cep.propman.PropositionalMachine.TransitionOtherwise;
 
 import java.util.ArrayList;
@@ -38,6 +39,21 @@ import java.util.Set;
  */
 public class MultiMonitor extends SynchronousProcessor
 {
+  /**
+   * The constant function that produces the total multi-event
+   */
+  public static final transient EmitConstant NU = new EmitConstant(SymbolicMultiEvent.ALL);
+  
+  /**
+   * The constant function that produces the empty multi-event
+   */
+  public static final transient EmitConstant EMPTY = new EmitConstant(SymbolicMultiEvent.NOTHING);
+  
+  /**
+   * The constant function that produces no output
+   */
+  public static final transient EmitConstant EPSILON = new EmitConstant(null);
+  
   /**
    * The uni-monitor from which the multi-monitor is lifted
    */
