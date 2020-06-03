@@ -32,17 +32,13 @@ import ca.uqac.lif.cep.propman.MultiEventFunction.Identity;
 
 public class PropositionalMachineTest
 {
+  
   @Test
   public void test1()
   {
     String[] variables = new String[] {"a", "b", "c"};
     MultiEventFactory factory = new MultiEventFactory(variables);
-    MultiEventFunction f = new MergeVariables("a", "b");
-    PropositionalMachine machine = new PropositionalMachine();
-    machine.addTransition(1, new Transition(2, factory.readFromValuations("TFF"), f));
-    machine.addTransition(1, new TransitionOtherwise(1, Identity.instance));
-    machine.addTransition(2, new Transition(1, factory.readFromValuations("FTF"), f));
-    machine.addTransition(2, new TransitionOtherwise(2, Identity.instance));
+    PropositionalMachine machine = getMachine1();
     SinkLast sink = new SinkLast();
     Connector.connect(machine, sink);
     Pushable p = machine.getPushableInput();
@@ -82,6 +78,17 @@ public class PropositionalMachineTest
     assertTrue(vals.contains(Valuation.readFromString("TFF", variables)));
     assertTrue(vals.contains(Valuation.readFromString("FTF", variables)));
     System.out.println(e);
-
+  }
+  
+  public static PropositionalMachine getMachine1()
+  {
+    MultiEventFunction f = new MergeVariables("a", "b");
+    MultiEventFactory factory = new MultiEventFactory("a", "b", "c");
+    PropositionalMachine machine = new PropositionalMachine();
+    machine.addTransition(1, new Transition(2, factory.readFromValuations("TFF"), f));
+    machine.addTransition(1, new TransitionOtherwise(1, Identity.instance));
+    machine.addTransition(2, new Transition(1, factory.readFromValuations("FTF"), f));
+    machine.addTransition(2, new TransitionOtherwise(2, Identity.instance));
+    return machine;
   }
 }
