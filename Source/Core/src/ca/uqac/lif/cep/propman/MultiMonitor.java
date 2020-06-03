@@ -77,6 +77,7 @@ public class MultiMonitor extends SynchronousProcessor
     MultiEvent input_event = (MultiEvent) inputs[0];
     Set<Valuation> to_evaluate = new HashSet<Valuation>(); // will store all the valuations of the multi-event input
     to_evaluate.addAll(input_event.getValuations());
+    boolean transition_taken = false;
     for (Entry<Integer, Integer> sigma_state : m_sigma.entrySet())
     { // iterating on each state of m_sigma
       if (sigma_state.getValue() == 0)
@@ -102,6 +103,7 @@ public class MultiMonitor extends SynchronousProcessor
           if (common_valuations.size() > 0)// valuations that take this transition will not take any
                                            // other transition because the monitor is deterministic
           {
+            transition_taken = true;
             // add the new state to sigma_prime
             if (sigma_prime.containsKey(t.getDestination()))
             {
@@ -149,6 +151,7 @@ public class MultiMonitor extends SynchronousProcessor
       // transition will take the otherwise transition
       if (otherwise != null && !to_evaluate.isEmpty())
       {
+        transition_taken = true;
         int paths = 0;
         if (sigma_prime.containsKey(otherwise.getDestination()))
         {
@@ -188,7 +191,7 @@ public class MultiMonitor extends SynchronousProcessor
 
     // the function will return false if none of the input valuations takes any
     // transition from any state
-    if (to_evaluate.size() == input_event.getValuations().size())
+    if (!transition_taken)
     { // i.e. if nothing is removed from to_evaluate set
       return false;
     }
