@@ -79,6 +79,10 @@ public class MultiMonitor extends SynchronousProcessor
     to_evaluate.addAll(input_event.getValuations());
     for (Entry<Integer, Integer> sigma_state : m_sigma.entrySet())
     { // iterating on each state of m_sigma
+      if (sigma_state.getValue() == 0)
+      {
+        continue;
+      }
       List<PropositionalMachine.Transition> outgoing_edges = new ArrayList<PropositionalMachine.Transition>();
       outgoing_edges = m_monitor.getTransitionsFor(sigma_state.getKey());
       PropositionalMachine.Transition otherwise = null;
@@ -86,7 +90,6 @@ public class MultiMonitor extends SynchronousProcessor
       // iterate through the outgoing transitions of a state in m_sigma
       for (PropositionalMachine.Transition t : outgoing_edges)
       {
-
         int paths = 0;
         if (t instanceof TransitionOtherwise)
         {
@@ -144,7 +147,7 @@ public class MultiMonitor extends SynchronousProcessor
 
       // the remaining valuations in the set to_evaluate that did not take any
       // transition will take the otherwise transition
-      if (otherwise != null)
+      if (otherwise != null && !to_evaluate.isEmpty())
       {
         int paths = 0;
         if (sigma_prime.containsKey(otherwise.getDestination()))
@@ -168,8 +171,7 @@ public class MultiMonitor extends SynchronousProcessor
         {
           beta.increment(Troolean.Value.TRUE, paths);
         }
-
-        if (output_event instanceof SymbolicMultiEvent.Nothing)
+        else if (output_event instanceof SymbolicMultiEvent.Nothing)
         {
           beta.increment(Troolean.Value.FALSE, paths);
         }
