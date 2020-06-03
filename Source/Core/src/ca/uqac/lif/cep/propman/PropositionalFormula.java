@@ -54,7 +54,7 @@ public class PropositionalFormula extends FunctionTree
    * @param v The valuation
    * @return The value of the formula for this valuation
    */
-  public Troolean evaluate(Valuation v)
+  public Troolean.Value evaluate(Valuation v)
   {
     Object[] inputs = new Object[] {v};
     Object[] outputs = new Object[1];
@@ -63,7 +63,7 @@ public class PropositionalFormula extends FunctionTree
     {
       throw new FunctionException("Output of expression is not a Troolean");
     }
-    return (Troolean) outputs[0];
+    return (Troolean.Value) outputs[0];
   }
   
   /**

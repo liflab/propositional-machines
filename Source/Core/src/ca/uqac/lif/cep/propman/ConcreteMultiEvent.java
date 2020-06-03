@@ -18,6 +18,7 @@
 package ca.uqac.lif.cep.propman;
 
 import ca.uqac.lif.cep.ltl.Troolean;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -69,7 +70,7 @@ public class ConcreteMultiEvent implements MultiEvent
   }
 
   @Override
-  public boolean intersects(MultiEvent e)
+  public Valuation[] intersects(MultiEvent e)
   {
     if (e instanceof ConcreteMultiEvent)
     {
@@ -79,43 +80,52 @@ public class ConcreteMultiEvent implements MultiEvent
     {
       return intersectsWith((SymbolicMultiEvent) e);
     }
-    return false;
+    return null;
   }
   
   /**
    * Determines if this multi-event intersects with another concrete
    * multi-event.
    * @param e The other multi-event
-   * @return <tt>true</tt> if they intersect, <tt>false</tt> otherwise
+   * @return <tt>int</tt> if they intersect, <tt>0</tt> otherwise
    */
-  protected boolean intersectsWith(ConcreteMultiEvent e)
+  protected Valuation[] intersectsWith(ConcreteMultiEvent e)
   {
+	  //int count =0;
+	Valuation[] common_valuations = new Valuation[this.getValuations().size()];
+	int i =0;
+
     for (Valuation v : m_valuations)
     {
       if (e.m_valuations.contains(v))
       {
-        return true;
+        common_valuations[i] =v;
+        i++;
       }
     }
-    return false;
+    return common_valuations;
   }
   
   /**
    * Determines if this multi-event intersects with another symbolic
    * multi-event.
    * @param e The other multi-event
-   * @return <tt>true</tt> if they intersect, <tt>false</tt> otherwise
+   * @return <tt>int</tt> if they intersect, <tt>0</tt> otherwise
    */
-  protected boolean intersectsWith(SymbolicMultiEvent e)
+  protected Valuation[] intersectsWith(SymbolicMultiEvent e)
   {
+	//int count = 0;
+	Valuation[] common_valuations = new Valuation[this.getValuations().size()];
+	int i= 0;
     PropositionalFormula f = e.getFormula();
     for (Valuation v : m_valuations)
     {
-      if (f.evaluate(v) == Troolean.TRUE)
+      if (f.evaluate(v) == Troolean.Value.TRUE)
       {
-        return true;
+        common_valuations[i] =v;
+        i++;
       }
     }
-    return false;
+    return common_valuations;
   }
 }

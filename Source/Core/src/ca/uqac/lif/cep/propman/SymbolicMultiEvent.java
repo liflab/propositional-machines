@@ -19,6 +19,8 @@
 package ca.uqac.lif.cep.propman;
 
 import ca.uqac.lif.cep.ltl.Troolean;
+
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,12 +32,12 @@ import java.util.Set;
 public class SymbolicMultiEvent implements MultiEvent
 {
   /**
-   * Static reference ot the symbolic multi-event that contains all valuations
+   * Static reference to the symbolic multi-event that contains all valuations
    */
   public static final transient All ALL = new All();
   
   /**
-   * Static reference ot the symbolic multi-event that contains no valuation
+   * Static reference to the symbolic multi-event that contains no valuation
    */
   public static final transient Nothing NOTHING = new Nothing();
   
@@ -70,15 +72,15 @@ public class SymbolicMultiEvent implements MultiEvent
   }
 
   @Override
-  public Set<Valuation> getValuations()
+  public HashSet<Valuation> getValuations()
   {
     Set<String> domain = getDomain();
-    Set<Valuation> valuations = new HashSet<Valuation>();
+    HashSet<Valuation> valuations = new HashSet<Valuation>();
     ValuationIterator it = new ValuationIterator(domain);
     while (it.hasNext())
     {
       Valuation v = it.next();
-      if (m_formula.evaluate(v) == Troolean.TRUE)
+      if (m_formula.evaluate(v) == Troolean.Value.TRUE)
       {
         valuations.add(v);
       }
@@ -87,7 +89,7 @@ public class SymbolicMultiEvent implements MultiEvent
   }
 
   @Override
-  public boolean intersects(MultiEvent e)
+  public Valuation[] intersects(MultiEvent e)
   {
     if (e instanceof ConcreteMultiEvent)
     {
@@ -97,7 +99,7 @@ public class SymbolicMultiEvent implements MultiEvent
     {
       return intersectsWith((SymbolicMultiEvent) e);
     }
-    return false;
+    return null;
   }
 
   /**
@@ -106,20 +108,24 @@ public class SymbolicMultiEvent implements MultiEvent
    * @param e The other multi-event
    * @return <tt>true</tt> if they intersect, <tt>false</tt> otherwise
    */
-  protected boolean intersectsWith(SymbolicMultiEvent e)
+  protected Valuation[] intersectsWith(SymbolicMultiEvent e)
   {
+	//int count =0;
+    Valuation[] common_valuations = new Valuation[this.getValuations().size()];
+    int i =0;
     Set<String> domain = getDomain();
     domain.addAll(e.getDomain());
     ValuationIterator it = new ValuationIterator(domain);
     while (it.hasNext())
     {
       Valuation v = it.next();
-      if (e.m_formula.evaluate(v) == Troolean.TRUE && m_formula.evaluate(v) == Troolean.TRUE)
+      if (e.m_formula.evaluate(v) == Troolean.Value.TRUE && m_formula.evaluate(v) == Troolean.Value.TRUE)
       {
-        return true;
+        common_valuations[i] = v;
+        i++;
       }
     }
-    return false;
+    return common_valuations;
   }
 
   /**
@@ -128,17 +134,22 @@ public class SymbolicMultiEvent implements MultiEvent
    * @param e The other multi-event
    * @return <tt>true</tt> if they intersect, <tt>false</tt> otherwise
    */
-  protected boolean intersectsWith(ConcreteMultiEvent e)
+  protected Valuation[] intersectsWith(ConcreteMultiEvent e)
   {
+	//int count =0;
     Set<Valuation> vals = e.getValuations();
+    Valuation[] common_valuations = new Valuation[this.getValuations().size()];
+    int i =0;
+    
     for (Valuation v : vals)
     {
-      if (m_formula.evaluate(v) == Troolean.TRUE)
+      if (m_formula.evaluate(v) == Troolean.Value.TRUE)
       {
-        return true;
+        common_valuations[i] =v;
+        i++;
       }
     }
-    return false;
+    return common_valuations;
   }
   
   /**

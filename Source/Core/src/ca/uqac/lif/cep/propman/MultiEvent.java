@@ -33,13 +33,12 @@ public interface MultiEvent
   public Set<Valuation> getValuations();
   
   /**
-   * Determines if a multi-event has at least one common valuation with another
-   * multi-event
+   * Determines the number of common valuations between two multi-events
    * @param e The other multi-event
-   * @return <tt>true</tt> if they have a valuation in common,
-   * <tt>false</tt> otherwise
+   * @return <tt>int != 0</tt> if they have common valuations,
+   * <tt>0</tt> otherwise
    */
-  public boolean intersects(MultiEvent e);
+  public Valuation[] intersects(MultiEvent e);
   
   /**
    * Gets the domain of this multi-event, i.e. the set of all propositional

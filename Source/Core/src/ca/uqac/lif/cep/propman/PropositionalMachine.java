@@ -82,6 +82,7 @@ public class PropositionalMachine extends SynchronousProcessor
       list = m_delta.get(source);
     }
     list.add(t);
+    m_delta.put(source, list);
     return this;
   }
 
@@ -94,8 +95,10 @@ public class PropositionalMachine extends SynchronousProcessor
       // No transition from this state: output nothing
       return false;
     }
-    List<Transition> transitions = m_delta.get(m_state);
+    List<Transition> transitions = new ArrayList<Transition>();
+    transitions = m_delta.get(m_state);
     Transition candidate = null, otherwise = null, to_take = null;
+    int count = 0;
     for (Transition t : transitions)
     {
       if (t instanceof TransitionOtherwise)
@@ -105,13 +108,13 @@ public class PropositionalMachine extends SynchronousProcessor
       else
       {
         MultiEvent condition = t.getCondition();
-        if (input_event.intersects(condition))
+        if (input_event.intersects(condition).length> 0)
         {
           // This happens at most once if the machine is deterministic
           candidate = t;
         }
       }
-    }
+    } // end of for: end up with one candidate
     if (candidate != null)
     {
       // Take this transition
