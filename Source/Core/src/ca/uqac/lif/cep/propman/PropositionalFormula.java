@@ -58,7 +58,7 @@ public class PropositionalFormula extends FunctionTree
     Object[] inputs = new Object[] {v};
     Object[] outputs = new Object[1];
     evaluate(inputs, outputs);
-    if (!(outputs[0] instanceof Troolean))
+    if (!(outputs[0] instanceof Troolean.Value))
     {
       throw new FunctionException("Output of expression is not a Troolean");
     }

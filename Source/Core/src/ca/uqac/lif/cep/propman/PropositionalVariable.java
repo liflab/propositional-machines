@@ -15,7 +15,6 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package ca.uqac.lif.cep.propman;
 
 import ca.uqac.lif.cep.functions.UnaryFunction;
@@ -59,5 +58,11 @@ public class PropositionalVariable extends UnaryFunction<Valuation,Troolean.Valu
       return v.get(m_varName);
     }
     return Troolean.Value.INCONCLUSIVE;
+  }
+  
+  @Override
+  public String toString()
+  {
+    return m_varName;
   }
 }

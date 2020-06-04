@@ -232,5 +232,11 @@ public class PropositionalMachine extends SynchronousProcessor
     {
       super(destination, null, f);
     }
+    
+    @Override
+    public String toString()
+    {
+      return "*";
+    }
   }
 }

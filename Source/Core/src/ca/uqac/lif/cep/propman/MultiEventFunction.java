@@ -59,6 +59,16 @@ public abstract class MultiEventFunction extends UnaryFunction<MultiEvent,MultiE
     {
       return m_constant;
     }
+    
+    @Override
+    public String toString()
+    {
+      if (m_constant == null)
+      {
+        return "\u03b5";
+      }
+      return m_constant.toString();
+    }
   }
   
   /**
