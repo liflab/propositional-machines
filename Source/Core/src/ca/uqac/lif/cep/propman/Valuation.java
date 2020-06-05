@@ -29,7 +29,7 @@ public class Valuation extends HashMap<String,Troolean.Value>
   /**
    * Dummy UID
    */
-  private static final long serialVersionUID = 1L;
+  private static final transient long serialVersionUID = 1L;
   
   @Override
   public int hashCode()
