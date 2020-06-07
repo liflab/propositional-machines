@@ -27,6 +27,7 @@ import ca.uqac.lif.cep.propman.MultiMonitor.VerdictCount;
 import ca.uqac.lif.cep.propman.PropositionalMachine.Transition;
 import ca.uqac.lif.cep.propman.PropositionalMachine.TransitionOtherwise;
 import ca.uqac.lif.cep.tmf.SinkLast;
+import java.math.BigInteger;
 
 import static ca.uqac.lif.cep.propman.MultiMonitor.EMPTY;
 import static ca.uqac.lif.cep.propman.MultiMonitor.EPSILON;
@@ -113,8 +114,8 @@ public class MultiMonitorTest
    */
   public static void assertBeta(VerdictCount beta, int num_true, int num_false, int num_inc)
   {
-    assertEquals("For true", num_true, beta.get(Value.TRUE));
-    assertEquals("For inconclusive", num_inc, beta.get(Value.INCONCLUSIVE));
-    assertEquals("For false", num_false, beta.get(Value.FALSE));
+    assertEquals("For true", BigInteger.valueOf(num_true), beta.get(Value.TRUE));
+    assertEquals("For inconclusive", BigInteger.valueOf(num_inc), beta.get(Value.INCONCLUSIVE));
+    assertEquals("For false", BigInteger.valueOf(num_false), beta.get(Value.FALSE));
   }
 }

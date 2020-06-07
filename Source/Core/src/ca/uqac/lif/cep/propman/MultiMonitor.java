@@ -21,7 +21,7 @@ import ca.uqac.lif.cep.SynchronousProcessor;
 import ca.uqac.lif.cep.ltl.Troolean;
 import ca.uqac.lif.cep.propman.MultiEventFunction.EmitConstant;
 import ca.uqac.lif.cep.propman.PropositionalMachine.TransitionOtherwise;
-
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -81,7 +81,7 @@ public class MultiMonitor extends SynchronousProcessor
     m_monitor = monitor;
     // Initializes sigma
     m_sigma = new PathCount();
-    m_sigma.put(m_monitor.getInitialState(), 1);
+    m_sigma.put(m_monitor.getInitialState(), BigInteger.ONE);
     m_verdicts = new VerdictCount();
   }
 
@@ -94,11 +94,11 @@ public class MultiMonitor extends SynchronousProcessor
     MultiEvent input_event = (MultiEvent) inputs[0];
     boolean transition_taken = false;
     Set<Valuation> all_valuations = input_event.getValuations();
-    for (Entry<Integer, Integer> sigma_state : m_sigma.entrySet())
+    for (Entry<Integer,BigInteger> sigma_state : m_sigma.entrySet())
     { // iterating on each state of m_sigma
       Set<Valuation> to_evaluate = new HashSet<Valuation>(); // will store all the valuations of the multi-event input
       to_evaluate.addAll(all_valuations);
-      if (sigma_state.getValue() == 0)
+      if (sigma_state.getValue().equals(BigInteger.ZERO))
       {
         continue;
       }
@@ -122,7 +122,7 @@ public class MultiMonitor extends SynchronousProcessor
           {
             transition_taken = true;
             // add the new state to sigma_prime
-            int paths = sigma_state.getValue() * common_valuations.size();
+            BigInteger paths = sigma_state.getValue().multiply(BigInteger.valueOf(common_valuations.size()));
             sigma_prime.increment(t.getDestination(), paths);
             
             // get the value of the output (verdict) on this transition + update beta
@@ -157,7 +157,7 @@ public class MultiMonitor extends SynchronousProcessor
       if (otherwise != null && !to_evaluate.isEmpty())
       {
         transition_taken = true;
-        int paths = sigma_state.getValue() * to_evaluate.size();
+        BigInteger paths = sigma_state.getValue().multiply(BigInteger.valueOf(to_evaluate.size()));
         sigma_prime.increment(otherwise.getDestination(), paths);
 
         // get the value of the output (verdict) + update beta
@@ -199,7 +199,7 @@ public class MultiMonitor extends SynchronousProcessor
   {
     super.reset();
     m_sigma = new PathCount();
-    m_sigma.put(m_monitor.getInitialState(), 1);
+    m_sigma.put(m_monitor.getInitialState(), BigInteger.ONE);
   }
 
   @Override
@@ -213,7 +213,7 @@ public class MultiMonitor extends SynchronousProcessor
    * A data structure associating machine states to a number of uni-traces. This
    * corresponds to the mapping &sigma; in Algorithm 1.
    */
-  protected static class PathCount extends HashMap<Integer, Integer>
+  protected static class PathCount extends HashMap<Integer,BigInteger>
   {
     /**
      * Dummy UID
@@ -230,17 +230,41 @@ public class MultiMonitor extends SynchronousProcessor
      */
     public void increment(int state, int paths)
     {
+      BigInteger b_paths = BigInteger.valueOf(paths);
+      if (!containsKey(state))
+      {
+        put(state, b_paths);
+      }
+      else
+      {
+        BigInteger c = get(state);
+        put(state, c.add(b_paths));
+      }
+    }
+    
+    /**
+     * Increments the number of paths associated to a state
+     * 
+     * @param state
+     *          The state
+     * @param paths
+     *          The number of paths to add
+     */
+    public void increment(int state, BigInteger paths)
+    {
       if (!containsKey(state))
       {
         put(state, paths);
       }
       else
       {
-        int c = get(state);
-        put(state, c + paths);
+        BigInteger c = get(state);
+        put(state, c.add(paths));
       }
     }
   }
+  
+  
 
   /**
    * A data structure associating monitor verdicts to a number of uni-traces. This
@@ -251,17 +275,17 @@ public class MultiMonitor extends SynchronousProcessor
     /**
      * The number of uni-traces leading to the true verdict
      */
-    protected int m_numTrue = 0;
+    protected BigInteger m_numTrue = BigInteger.ZERO;
 
     /**
      * The number of uni-traces leading to the false verdict
      */
-    protected int m_numFalse = 0;
+    protected BigInteger m_numFalse = BigInteger.ZERO;
 
     /**
      * The number of uni-traces leading to the inconclusive verdict
      */
-    protected int m_numInconclusive = 0;
+    protected BigInteger m_numInconclusive = BigInteger.ZERO;
 
     /**
      * Increments the number of paths associated to a given monitor verdict
@@ -273,17 +297,42 @@ public class MultiMonitor extends SynchronousProcessor
      */
     public void increment(Troolean.Value v, int paths)
     {
+      BigInteger b_paths = BigInteger.valueOf(paths);
       if (v == Troolean.Value.TRUE)
       {
-        m_numTrue += paths;
+        m_numTrue = m_numTrue.add(b_paths);
       }
       if (v == Troolean.Value.FALSE)
       {
-        m_numFalse += paths;
+        m_numFalse = m_numFalse.add(b_paths);
       }
       if (v == Troolean.Value.INCONCLUSIVE)
       {
-        m_numInconclusive += paths;
+        m_numInconclusive = m_numInconclusive.add(b_paths);
+      }
+    }
+    
+    /**
+     * Increments the number of paths associated to a given monitor verdict
+     * 
+     * @param v
+     *          The verdict
+     * @param paths
+     *          The number of paths to add
+     */
+    public void increment(Troolean.Value v, BigInteger paths)
+    {
+      if (v == Troolean.Value.TRUE)
+      {
+        m_numTrue = m_numTrue.add(paths);
+      }
+      if (v == Troolean.Value.FALSE)
+      {
+        m_numFalse = m_numFalse.add(paths);
+      }
+      if (v == Troolean.Value.INCONCLUSIVE)
+      {
+        m_numInconclusive = m_numInconclusive.add(paths);
       }
     }
 
@@ -294,7 +343,7 @@ public class MultiMonitor extends SynchronousProcessor
      *          The verdict
      * @return The number of traces
      */
-    public int get(Troolean.Value v)
+    public BigInteger get(Troolean.Value v)
     {
       if (v == Troolean.Value.TRUE)
       {
@@ -308,7 +357,7 @@ public class MultiMonitor extends SynchronousProcessor
       {
         return m_numInconclusive;
       }
-      return 0; // Not supposed to happen
+      return BigInteger.ZERO; // Not supposed to happen
     }
     
     @Override

@@ -20,6 +20,7 @@ package ca.uqac.lif.cep.propman;
 import ca.uqac.lif.cep.functions.UnaryFunction;
 import ca.uqac.lif.cep.ltl.Troolean.Value;
 import ca.uqac.lif.cep.propman.MultiMonitor.VerdictCount;
+import java.math.BigInteger;
 
 /**
  * Computes the entropy of a multi-monitor verdict.
@@ -36,6 +37,16 @@ public class GetEntropy extends UnaryFunction<VerdictCount,Number>
    * The value of ln 2
    */
   protected static final transient double LN2 = Math.log(2);
+  
+  /**
+   * The precision used in integer divisions
+   */
+  protected static final float m_intPrecision = 1000;
+  
+  /**
+   * The precision used in integer divisions
+   */
+  protected static final BigInteger m_precision = BigInteger.valueOf((long) m_intPrecision);
 
   /**
    * Creates a new instance of the function
@@ -48,14 +59,14 @@ public class GetEntropy extends UnaryFunction<VerdictCount,Number>
   @Override
   public Number getValue(VerdictCount x)
   {
-    long total = x.get(Value.FALSE) + x.get(Value.TRUE) + x.get(Value.INCONCLUSIVE);
-    if (total == 0)
+    BigInteger total = x.get(Value.FALSE).add(x.get(Value.TRUE)).add(x.get(Value.INCONCLUSIVE));
+    if (total.equals(BigInteger.ZERO))
     {
       return 0;
     }
-    float p_false = (float) x.get(Value.FALSE) / (float) total;
-    float p_true = (float) x.get(Value.TRUE) / (float) total;
-    float p_inc = (float) x.get(Value.INCONCLUSIVE) / (float) total;
+    float p_false = (float) x.get(Value.FALSE).multiply(m_precision).divide(total).floatValue() / m_intPrecision;
+    float p_true = (float) x.get(Value.TRUE).multiply(m_precision).divide(total).floatValue() / m_intPrecision;
+    float p_inc = (float) x.get(Value.INCONCLUSIVE).multiply(m_precision).divide(total).floatValue() / m_intPrecision;
     double h = -(p_false * log2(p_false)) - (p_true * log2(p_true)) -( p_inc * log2(p_inc));
     return h;
   }

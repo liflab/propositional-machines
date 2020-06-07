@@ -64,6 +64,29 @@ public class PropositionalMachine extends SynchronousProcessor
   }
   
   /**
+   * Gets the number of states in the machine
+   * @return The number of states
+   */
+  public int getStateCount()
+  {
+    return m_delta.size();
+  }
+  
+  /**
+   * Gets the number of transitions in the machine
+   * @return The number of transitions
+   */
+  public int getTransitionCount()
+  {
+    int size = 0;
+    for (Map.Entry<Integer,List<Transition>> e : m_delta.entrySet())
+    {
+      size += e.getValue().size();
+    }
+    return size;
+  }
+  
+  /**
    * Adds a transition to the machine
    * @param source The source state of the transition
    * @param t The transition
