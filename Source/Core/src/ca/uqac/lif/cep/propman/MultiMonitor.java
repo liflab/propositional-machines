@@ -62,12 +62,12 @@ public class MultiMonitor extends SynchronousProcessor
   /**
    * An association between uni-monitor states and a number of paths
    */
-  protected PathCount m_sigma;
+  protected transient PathCount m_sigma;
 
   /**
    * An association between uni-monitor verdicts and a number of paths
    */
-  protected VerdictCount m_verdicts;
+  protected transient VerdictCount m_verdicts;
 
   /**
    * Creates a new multi-monitor lifted from a uni-monitor
@@ -270,7 +270,7 @@ public class MultiMonitor extends SynchronousProcessor
    * A data structure associating monitor verdicts to a number of uni-traces. This
    * corresponds to the mapping &beta; in Algorithm 1.
    */
-  protected static class VerdictCount
+  public static class VerdictCount
   {
     /**
      * The number of uni-traces leading to the true verdict
