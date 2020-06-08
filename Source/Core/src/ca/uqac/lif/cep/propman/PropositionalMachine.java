@@ -20,9 +20,11 @@ package ca.uqac.lif.cep.propman;
 import ca.uqac.lif.cep.SynchronousProcessor;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 
 /**
  * A finite-state machine that receives and produces multi-events.
@@ -34,17 +36,17 @@ public class PropositionalMachine extends SynchronousProcessor
    * An index to the current state
    */
   protected int m_state = -1;
-  
+
   /**
    * The index of the initial state of the machine
    */
   protected int m_initialState = -1;
-  
+
   /**
    * The transition relation of the machine
    */
   protected Map<Integer,List<Transition>> m_delta;
-  
+
   /**
    * Creates a new empty propositional machine
    */
@@ -53,7 +55,7 @@ public class PropositionalMachine extends SynchronousProcessor
     super(1, 1);
     m_delta = new HashMap<Integer,List<Transition>>();
   }
-  
+
   /**
    * Gets the number associated to the initial state of the machine
    * @return The number of the initial state
@@ -62,7 +64,7 @@ public class PropositionalMachine extends SynchronousProcessor
   {
     return m_initialState;
   }
-  
+
   /**
    * Gets the number of states in the machine
    * @return The number of states
@@ -71,7 +73,7 @@ public class PropositionalMachine extends SynchronousProcessor
   {
     return m_delta.size();
   }
-  
+
   /**
    * Gets the number of transitions in the machine
    * @return The number of transitions
@@ -85,7 +87,18 @@ public class PropositionalMachine extends SynchronousProcessor
     }
     return size;
   }
-  
+
+  /**
+   * Sets the initial state of the machine
+   * @param state The ID of the initial state
+   * @return This machine
+   */
+  public PropositionalMachine setInitialState(int state)
+  {
+    m_initialState = state;
+    return this;
+  }
+
   /**
    * Adds a transition to the machine
    * @param source The source state of the transition
@@ -161,7 +174,7 @@ public class PropositionalMachine extends SynchronousProcessor
     m_state = to_take.getDestination();
     return true;
   }
-  
+
   /**
    * Gets all the outgoing transitions from a given state
    * @param state The state
@@ -182,7 +195,51 @@ public class PropositionalMachine extends SynchronousProcessor
     // TODO Let's do this later
     throw new UnsupportedOperationException("Not implemented yet");
   }
-  
+
+  /**
+   * Cleans up the transition relation by removing any states that
+   * are not reachable from the initial state
+   */
+  protected void removeUnreachableStates()
+  {
+    Set<Integer> seen = new HashSet<Integer>();
+    Set<Integer> to_visit = new HashSet<Integer>();
+    to_visit.add(m_initialState);
+    while (!to_visit.isEmpty())
+    {
+      int current = -1;
+      for (int s : to_visit)
+      {
+        current = s;
+        break;
+      }
+      to_visit.remove(current);
+      if (seen.contains(current))
+      {
+        continue;
+      }
+      seen.add(current);
+      List<Transition> trans = m_delta.get(current);
+      for (Transition t : trans)
+      {
+        int dest = t.getDestination();
+        if (!seen.contains(dest))
+        {
+          to_visit.add(dest);
+        }
+      }
+    }
+    Set<Integer> all = new HashSet<Integer>(m_delta.size());
+    all.addAll(m_delta.keySet());
+    for (int i : all)
+    {
+      if (!seen.contains(i))
+      {
+        m_delta.remove(i);
+      }
+    }
+  }
+
   /**
    * A transition in the propositional machine
    */
@@ -192,17 +249,17 @@ public class PropositionalMachine extends SynchronousProcessor
      * The function that transforms the input event into the output event
      */
     protected MultiEventFunction m_function;
-    
+
     /**
      * The multi-event condition on the transition
      */
     protected MultiEvent m_condition;
-    
+
     /**
      * The destination state of the transition
      */
     protected int m_destination;
-    
+
     /**
      * Creates a new transition
      * @param destination The destination state of the transition
@@ -216,7 +273,7 @@ public class PropositionalMachine extends SynchronousProcessor
       m_condition = condition;
       m_function = f;
     }
-    
+
     /**
      * Gets the multi-event condition on the transition
      * @return The condition
@@ -225,7 +282,7 @@ public class PropositionalMachine extends SynchronousProcessor
     {
       return m_condition;
     }
-    
+
     /**
      * Gets the function that transforms the input event into the output event
      * @return The function
@@ -234,7 +291,7 @@ public class PropositionalMachine extends SynchronousProcessor
     {
       return m_function;
     }
-    
+
     /**
      * Gets the destination state of the transition
      * @return The destination
@@ -244,7 +301,7 @@ public class PropositionalMachine extends SynchronousProcessor
       return m_destination;
     }
   }
-  
+
   /**
    * Special transition taken only when no other transition fires from a given
    * source state
@@ -255,7 +312,7 @@ public class PropositionalMachine extends SynchronousProcessor
     {
       super(destination, null, f);
     }
-    
+
     @Override
     public String toString()
     {
