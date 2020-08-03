@@ -72,6 +72,29 @@ public class ValuationIterator implements Iterator<Valuation>
     m_update = false;
   }
   
+  /**
+   * Creates a new valuation iterator.
+   * @param domain The list of variables. The iterator will enumerate all
+   * combinations of valuations for these variables. 
+   */
+  public ValuationIterator(String ... domain)
+  {
+    super();
+    m_variables = domain;
+    m_vector = new Troolean.Value[m_variables.length];
+    int i = 0;
+    for (String s : domain)
+    {
+      m_variables[i++] = s;
+    }
+    for (i = 0; i < m_variables.length; i++)
+    {
+      m_vector[i] = Troolean.Value.FALSE;
+    }
+    m_done = false;
+    m_update = false;
+  }
+  
   @Override
   public boolean hasNext()
   {
