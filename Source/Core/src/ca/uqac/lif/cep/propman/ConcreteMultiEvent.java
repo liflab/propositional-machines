@@ -163,4 +163,24 @@ public class ConcreteMultiEvent implements MultiEvent
     }
     return out.toString();
   }
+  
+  public static class All extends ConcreteMultiEvent
+  {
+    public All(String ... variables)
+    {
+      super(getAllValuations(variables));
+    }
+  }
+  
+  protected static Set<Valuation> getAllValuations(String ... variables)
+  {
+    Set<Valuation> set = new HashSet<Valuation>();
+    ValuationIterator it = new ValuationIterator(variables);
+    while (it.hasNext())
+    {
+      set.add(it.next());
+    }
+    return set;
+    
+  }
 }
