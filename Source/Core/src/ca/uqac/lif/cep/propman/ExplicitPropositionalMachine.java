@@ -63,13 +63,13 @@ public class ExplicitPropositionalMachine extends PropositionalMachine
   }
 
   @Override
-  public int getStateCount()
+  public long getStateCount()
   {
     return m_delta.size();
   }
 
   @Override
-  public int getTransitionCount()
+  public long getTransitionCount()
   {
     int size = 0;
     for (Map.Entry<Object,List<Transition>> e : m_delta.entrySet())

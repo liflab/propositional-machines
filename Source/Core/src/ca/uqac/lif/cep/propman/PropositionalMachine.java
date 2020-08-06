@@ -51,13 +51,13 @@ public abstract class PropositionalMachine extends SynchronousProcessor
    * Gets the number of states in the machine
    * @return The number of states
    */
-  public abstract int getStateCount();
+  public abstract long getStateCount();
   
   /**
    * Gets the number of transitions in the machine
    * @return The number of transitions
    */
-  public abstract int getTransitionCount();
+  public abstract long getTransitionCount();
   
   /**
    * A transition in the propositional machine

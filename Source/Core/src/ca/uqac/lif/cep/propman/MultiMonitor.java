@@ -102,13 +102,17 @@ public class MultiMonitor extends SynchronousProcessor
       {
         continue;
       }
-      List<ExplicitPropositionalMachine.Transition> outgoing_edges = new ArrayList<ExplicitPropositionalMachine.Transition>();
+      List<PropositionalMachine.Transition> outgoing_edges = new ArrayList<PropositionalMachine.Transition>();
       outgoing_edges = m_monitor.getTransitionsFor(sigma_state.getKey());
-      ExplicitPropositionalMachine.Transition otherwise = null;
+      PropositionalMachine.Transition otherwise = null;
 
       // iterate through the outgoing transitions of a state in m_sigma
-      for (ExplicitPropositionalMachine.Transition t : outgoing_edges)
+      for (PropositionalMachine.Transition t : outgoing_edges)
       {
+        if (to_evaluate.isEmpty())
+        {
+          break;
+        }
         if (t instanceof TransitionOtherwise)
         {
           otherwise = t;
@@ -116,7 +120,7 @@ public class MultiMonitor extends SynchronousProcessor
         else // if it is not an otherwise transition, we test if we can check it or not
         {
           MultiEvent condition = t.getCondition();
-          Set<Valuation> common_valuations = input_event.getIntersection(condition);
+          Set<Valuation> common_valuations = condition.getIntersection(input_event);
           if (common_valuations.size() > 0)// valuations that take this transition will not take any
                                            // other transition because the monitor is deterministic
           {
@@ -130,11 +134,11 @@ public class MultiMonitor extends SynchronousProcessor
             MultiEvent output_event = f.getValue(input_event);
 
             // beta increment ..
-            if (output_event instanceof SymbolicMultiEvent.All)
+            if (output_event instanceof SymbolicMultiEvent.All || output_event instanceof ConcreteMultiEvent.All)
             {
               beta.increment(Troolean.Value.TRUE, paths);
             }
-            else if (output_event instanceof SymbolicMultiEvent.Nothing)
+            else if (output_event instanceof SymbolicMultiEvent.Nothing || output_event instanceof ConcreteMultiEvent.Nothing)
             {
               beta.increment(Troolean.Value.FALSE, paths);
             }

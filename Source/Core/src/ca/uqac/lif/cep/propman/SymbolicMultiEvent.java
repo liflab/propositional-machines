@@ -152,6 +152,18 @@ public class SymbolicMultiEvent implements MultiEvent
     {
       super(new PropositionalFormula(Troolean.TRUE));
     }
+    
+    @Override
+    protected Set<Valuation> intersectsWith(SymbolicMultiEvent e)
+    {
+      return e.getValuations();
+    }
+    
+    @Override
+    protected Set<Valuation> intersectsWith(ConcreteMultiEvent e)
+    {
+      return e.getValuations();
+    }
   }
 
   /**

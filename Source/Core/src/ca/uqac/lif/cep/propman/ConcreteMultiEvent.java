@@ -103,6 +103,11 @@ public class ConcreteMultiEvent implements MultiEvent
   protected Set<Valuation> intersectsWith(ConcreteMultiEvent e)
   {
     Set<Valuation> common_valuations = new HashSet<Valuation>();
+    if (e instanceof ConcreteMultiEvent.All)
+    {
+      common_valuations.addAll(m_valuations);
+      return common_valuations;
+    }
     for (Valuation v : m_valuations)
     {
       if (e.m_valuations.contains(v))
@@ -122,6 +127,15 @@ public class ConcreteMultiEvent implements MultiEvent
   protected Set<Valuation> intersectsWith(SymbolicMultiEvent e)
   {
     Set<Valuation> common_valuations = new HashSet<Valuation>();
+    if (e instanceof SymbolicMultiEvent.All)
+    {
+      common_valuations.addAll(m_valuations);
+      return common_valuations;
+    }
+    if (e instanceof SymbolicMultiEvent.Nothing)
+    {
+      return common_valuations;
+    }
     PropositionalFormula f = e.getFormula();
     for (Valuation v : m_valuations)
     {
@@ -169,6 +183,14 @@ public class ConcreteMultiEvent implements MultiEvent
     public All(String ... variables)
     {
       super(getAllValuations(variables));
+    }
+  }
+  
+  public static class Nothing extends ConcreteMultiEvent
+  {
+    public Nothing(String ... variables)
+    {
+      super(new HashSet<Valuation>(0));
     }
   }
   
