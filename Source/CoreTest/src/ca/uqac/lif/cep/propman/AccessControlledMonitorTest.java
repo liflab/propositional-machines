@@ -31,8 +31,8 @@ import static ca.uqac.lif.cep.propman.MultiMonitor.NU;
 import static org.junit.Assert.*;
 
 import static ca.uqac.lif.cep.propman.MultiMonitorTest.assertBeta;
-import static ca.uqac.lif.cep.propman.PropositionalMachine.Transition;
-import static ca.uqac.lif.cep.propman.PropositionalMachine.TransitionOtherwise;
+import static ca.uqac.lif.cep.propman.ExplicitPropositionalMachine.Transition;
+import static ca.uqac.lif.cep.propman.ExplicitPropositionalMachine.TransitionOtherwise;
 
 public class AccessControlledMonitorTest
 {
@@ -42,8 +42,8 @@ public class AccessControlledMonitorTest
   {
     String[] variables = new String[] {"a", "b", "c"};
     MultiEventFactory factory = new MultiEventFactory(variables);
-    PropositionalMachine machine = PropositionalMachineTest.getMachine1();
-    PropositionalMachine uni_monitor = new PropositionalMachine();
+    ExplicitPropositionalMachine machine = PropositionalMachineTest.getMachine1();
+    ExplicitPropositionalMachine uni_monitor = new ExplicitPropositionalMachine();
     uni_monitor.addTransition(1, new Transition(2, factory.readFromValuations("TFF"), EPSILON));
     uni_monitor.addTransition(1, new Transition(3, factory.readFromValuations("FTF"), EPSILON));
     uni_monitor.addTransition(1, new TransitionOtherwise(1, EPSILON));

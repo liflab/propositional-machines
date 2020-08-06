@@ -45,18 +45,18 @@ public class DotMachineRenderer
     return this;
   }
   
-  public void render(PrintStream ps, PropositionalMachine machine)
+  public void render(PrintStream ps, ExplicitPropositionalMachine machine)
   {
     render(ps, machine, m_nicknames);
   }
   
-  public static void render(PrintStream ps, PropositionalMachine machine, Map<Object,String> nicknames)
+  public static void render(PrintStream ps, ExplicitPropositionalMachine machine, Map<Object,String> nicknames)
   {
     ps.println("digraph G {");
     ps.println("node [shape=\"circle\",fillstyle=\"solid\",fillcolor=\"#ffffff\"];");
-    for (Entry<Integer,List<Transition>> entry : machine.m_delta.entrySet())
+    for (Entry<Object,List<Transition>> entry : machine.m_delta.entrySet())
     {
-      int from = entry.getKey();
+      Object from = entry.getKey();
       for (Transition t : entry.getValue())
       {
         ps.print(from + " -> " + t.getDestination());

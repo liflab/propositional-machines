@@ -40,7 +40,7 @@ public class MultiMonitorTest
   public void test1()
   {
     MultiEventFactory factory = new MultiEventFactory("a", "b");
-    PropositionalMachine uni_monitor = new PropositionalMachine();
+    ExplicitPropositionalMachine uni_monitor = new ExplicitPropositionalMachine();
     uni_monitor.addTransition(0, new Transition(1, factory.readFromValuations("TF"), EPSILON));
     uni_monitor.addTransition(0, new Transition(2, factory.readFromValuations("FT"), EPSILON));
     uni_monitor.addTransition(0, new TransitionOtherwise(0, EPSILON));
@@ -63,7 +63,7 @@ public class MultiMonitorTest
   public void test2()
   {
     MultiEventFactory factory = new MultiEventFactory("a", "b");
-    PropositionalMachine uni_monitor = new PropositionalMachine();
+    ExplicitPropositionalMachine uni_monitor = new ExplicitPropositionalMachine();
     uni_monitor.addTransition(0, new Transition(1, factory.readFromValuations("TF"), EPSILON));
     uni_monitor.addTransition(0, new Transition(2, factory.readFromValuations("FT"), EPSILON));
     uni_monitor.addTransition(0, new TransitionOtherwise(0, EPSILON));
@@ -86,7 +86,7 @@ public class MultiMonitorTest
   public void test3()
   {
     MultiEventFactory factory = new MultiEventFactory("a", "b");
-    PropositionalMachine uni_monitor = new PropositionalMachine();
+    ExplicitPropositionalMachine uni_monitor = new ExplicitPropositionalMachine();
     uni_monitor.addTransition(0, new Transition(1, factory.readFromValuations("TF"), EPSILON));
     uni_monitor.addTransition(0, new Transition(2, factory.readFromValuations("FT"), EPSILON));
     uni_monitor.addTransition(0, new TransitionOtherwise(0, EPSILON));

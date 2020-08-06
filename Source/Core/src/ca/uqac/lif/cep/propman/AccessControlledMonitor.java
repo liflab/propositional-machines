@@ -31,6 +31,8 @@ public class AccessControlledMonitor extends GroupProcessor
 {
   /**
    * Creates a new acces-controlled monitor.
+   * @param <T> The type given to state labels in the access proxy
+   * @param <U> The type given to state labels in the uni-monitor
    * @param proxy The access proxy
    * @param monitor The uni-monitor
    */

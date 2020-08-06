@@ -18,228 +18,47 @@
 package ca.uqac.lif.cep.propman;
 
 import ca.uqac.lif.cep.SynchronousProcessor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
 
 /**
  * A finite-state machine that receives and produces multi-events.
  * @author Sylvain Hallé, Rania Taleb
  */
-public class PropositionalMachine extends SynchronousProcessor
+public abstract class PropositionalMachine extends SynchronousProcessor
 {
   /**
-   * An index to the current state
-   */
-  protected int m_state = -1;
-
-  /**
-   * The index of the initial state of the machine
-   */
-  protected int m_initialState = -1;
-
-  /**
-   * The transition relation of the machine
-   */
-  protected Map<Integer,List<Transition>> m_delta;
-
-  /**
-   * Creates a new empty propositional machine
+   * Creates a new propositional machine
    */
   public PropositionalMachine()
   {
     super(1, 1);
-    m_delta = new HashMap<Integer,List<Transition>>();
   }
-
+  
   /**
    * Gets the number associated to the initial state of the machine
    * @return The number of the initial state
    */
-  public int getInitialState()
-  {
-    return m_initialState;
-  }
-
-  /**
-   * Gets the number of states in the machine
-   * @return The number of states
-   */
-  public int getStateCount()
-  {
-    return m_delta.size();
-  }
-
-  /**
-   * Gets the number of transitions in the machine
-   * @return The number of transitions
-   */
-  public int getTransitionCount()
-  {
-    int size = 0;
-    for (Map.Entry<Integer,List<Transition>> e : m_delta.entrySet())
-    {
-      size += e.getValue().size();
-    }
-    return size;
-  }
-
-  /**
-   * Sets the initial state of the machine
-   * @param state The ID of the initial state
-   * @return This machine
-   */
-  public PropositionalMachine setInitialState(int state)
-  {
-    m_initialState = state;
-    return this;
-  }
-
-  /**
-   * Adds a transition to the machine
-   * @param source The source state of the transition
-   * @param t The transition
-   * @return This propositional machine
-   */
-  public PropositionalMachine addTransition(int source, Transition t)
-  {
-    if (m_initialState == -1)
-    {
-      m_initialState = source;
-      m_state = source;
-    }
-    List<Transition> list = new ArrayList<Transition>();
-    if (m_delta.containsKey(source))
-    {
-      list = m_delta.get(source);
-    }
-    list.add(t);
-    m_delta.put(source, list);
-    return this;
-  }
-
-  @Override
-  protected boolean compute(Object[] inputs, Queue<Object[]> outputs)
-  {
-    MultiEvent input_event = (MultiEvent) inputs[0];
-    if (!m_delta.containsKey(m_state))
-    {
-      // No transition from this state: output nothing
-      return false;
-    }
-    List<Transition> transitions = new ArrayList<Transition>();
-    transitions = m_delta.get(m_state);
-    Transition candidate = null, otherwise = null, to_take = null;
-    for (Transition t : transitions)
-    {
-      if (t instanceof TransitionOtherwise)
-      {
-        otherwise = t;
-      }
-      else
-      {
-        MultiEvent condition = t.getCondition();
-        if (input_event.getIntersection(condition).size() > 0)
-        {
-          // This happens at most once if the machine is deterministic
-          candidate = t;
-        }
-      }
-    } // end of for: end up with one candidate
-    if (candidate != null)
-    {
-      // Take this transition
-      to_take = candidate;
-    }
-    else if (otherwise != null)
-    {
-      to_take = otherwise;
-    }
-    if (to_take == null)
-    {
-      // Nowhere to go
-      return false;
-    }
-    // Produce output event and update state
-    MultiEventFunction f = to_take.getFunction();
-    MultiEvent output_event = f.getValue(input_event);
-    if (output_event != null)
-    {
-      outputs.add(new Object[] {output_event});
-    }
-    m_state = to_take.getDestination();
-    return true;
-  }
-
+  public abstract Object getInitialState();
+  
   /**
    * Gets all the outgoing transitions from a given state
    * @param state The state
    * @return A list of transitions; may be empty, but never null
    */
-  /*@ non_null @*/ public List<Transition> getTransitionsFor(int state)
-  {
-    if (!m_delta.containsKey(state))
-    {
-      return new ArrayList<Transition>(0);
-    }
-    return m_delta.get(state);
-  }
-
-  @Override
-  public PropositionalMachine duplicate(boolean with_state)
-  {
-    // TODO Let's do this later
-    throw new UnsupportedOperationException("Not implemented yet");
-  }
-
+  /*@ non_null @*/ public abstract List<Transition> getTransitionsFor(Object state);
+  
   /**
-   * Cleans up the transition relation by removing any states that
-   * are not reachable from the initial state
+   * Gets the number of states in the machine
+   * @return The number of states
    */
-  protected void removeUnreachableStates()
-  {
-    Set<Integer> seen = new HashSet<Integer>();
-    Set<Integer> to_visit = new HashSet<Integer>();
-    to_visit.add(m_initialState);
-    while (!to_visit.isEmpty())
-    {
-      int current = -1;
-      for (int s : to_visit)
-      {
-        current = s;
-        break;
-      }
-      to_visit.remove(current);
-      if (seen.contains(current))
-      {
-        continue;
-      }
-      seen.add(current);
-      List<Transition> trans = m_delta.get(current);
-      for (Transition t : trans)
-      {
-        int dest = t.getDestination();
-        if (!seen.contains(dest))
-        {
-          to_visit.add(dest);
-        }
-      }
-    }
-    Set<Integer> all = new HashSet<Integer>(m_delta.size());
-    all.addAll(m_delta.keySet());
-    for (int i : all)
-    {
-      if (!seen.contains(i))
-      {
-        m_delta.remove(i);
-      }
-    }
-  }
-
+  public abstract int getStateCount();
+  
+  /**
+   * Gets the number of transitions in the machine
+   * @return The number of transitions
+   */
+  public abstract int getTransitionCount();
+  
   /**
    * A transition in the propositional machine
    */
@@ -258,7 +77,7 @@ public class PropositionalMachine extends SynchronousProcessor
     /**
      * The destination state of the transition
      */
-    protected int m_destination;
+    protected Object m_destination;
 
     /**
      * Creates a new transition
@@ -266,7 +85,7 @@ public class PropositionalMachine extends SynchronousProcessor
      * @param phi The multi-event condition on the transition
      * @param f The function that transforms the input event into the output event
      */
-    public Transition(int destination, MultiEvent condition, MultiEventFunction f)
+    public Transition(Object destination, MultiEvent condition, MultiEventFunction f)
     {
       super();
       m_destination = destination;
@@ -296,7 +115,7 @@ public class PropositionalMachine extends SynchronousProcessor
      * Gets the destination state of the transition
      * @return The destination
      */
-    public int getDestination()
+    public Object getDestination()
     {
       return m_destination;
     }
@@ -308,7 +127,7 @@ public class PropositionalMachine extends SynchronousProcessor
    */
   public static class TransitionOtherwise extends Transition
   {
-    public TransitionOtherwise(int destination, MultiEventFunction f)
+    public TransitionOtherwise(Object destination, MultiEventFunction f)
     {
       super(destination, null, f);
     }

@@ -94,7 +94,7 @@ public class MultiMonitor extends SynchronousProcessor
     MultiEvent input_event = (MultiEvent) inputs[0];
     boolean transition_taken = false;
     Set<Valuation> all_valuations = input_event.getValuations();
-    for (Entry<Integer,BigInteger> sigma_state : m_sigma.entrySet())
+    for (Entry<Object,BigInteger> sigma_state : m_sigma.entrySet())
     { // iterating on each state of m_sigma
       Set<Valuation> to_evaluate = new HashSet<Valuation>(); // will store all the valuations of the multi-event input
       to_evaluate.addAll(all_valuations);
@@ -102,12 +102,12 @@ public class MultiMonitor extends SynchronousProcessor
       {
         continue;
       }
-      List<PropositionalMachine.Transition> outgoing_edges = new ArrayList<PropositionalMachine.Transition>();
+      List<ExplicitPropositionalMachine.Transition> outgoing_edges = new ArrayList<ExplicitPropositionalMachine.Transition>();
       outgoing_edges = m_monitor.getTransitionsFor(sigma_state.getKey());
-      PropositionalMachine.Transition otherwise = null;
+      ExplicitPropositionalMachine.Transition otherwise = null;
 
       // iterate through the outgoing transitions of a state in m_sigma
-      for (PropositionalMachine.Transition t : outgoing_edges)
+      for (ExplicitPropositionalMachine.Transition t : outgoing_edges)
       {
         if (t instanceof TransitionOtherwise)
         {
@@ -198,7 +198,6 @@ public class MultiMonitor extends SynchronousProcessor
   public void reset()
   {
     super.reset();
-    m_sigma = new PathCount();
     m_sigma.put(m_monitor.getInitialState(), BigInteger.ONE);
   }
 
@@ -213,7 +212,7 @@ public class MultiMonitor extends SynchronousProcessor
    * A data structure associating machine states to a number of uni-traces. This
    * corresponds to the mapping &sigma; in Algorithm 1.
    */
-  protected static class PathCount extends HashMap<Integer,BigInteger>
+  protected static class PathCount extends HashMap<Object,BigInteger>
   {
     /**
      * Dummy UID
@@ -228,7 +227,7 @@ public class MultiMonitor extends SynchronousProcessor
      * @param paths
      *          The number of paths to add
      */
-    public void increment(int state, int paths)
+    public void increment(Object state, int paths)
     {
       BigInteger b_paths = BigInteger.valueOf(paths);
       if (!containsKey(state))
@@ -250,7 +249,7 @@ public class MultiMonitor extends SynchronousProcessor
      * @param paths
      *          The number of paths to add
      */
-    public void increment(int state, BigInteger paths)
+    public void increment(Object state, BigInteger paths)
     {
       if (!containsKey(state))
       {

@@ -38,7 +38,7 @@ public class PropositionalMachineTest
   {
     String[] variables = new String[] {"a", "b", "c"};
     MultiEventFactory factory = new MultiEventFactory(variables);
-    PropositionalMachine machine = getMachine1();
+    ExplicitPropositionalMachine machine = getMachine1();
     SinkLast sink = new SinkLast();
     Connector.connect(machine, sink);
     Pushable p = machine.getPushableInput();
@@ -80,11 +80,11 @@ public class PropositionalMachineTest
     System.out.println(e);
   }
   
-  public static PropositionalMachine getMachine1()
+  public static ExplicitPropositionalMachine getMachine1()
   {
     MultiEventFunction f = new MergeVariables("a", "b");
     MultiEventFactory factory = new MultiEventFactory("a", "b", "c");
-    PropositionalMachine machine = new PropositionalMachine();
+    ExplicitPropositionalMachine machine = new ExplicitPropositionalMachine();
     machine.addTransition(1, new Transition(2, factory.readFromValuations("TFF"), f));
     machine.addTransition(1, new TransitionOtherwise(1, Identity.instance));
     machine.addTransition(2, new Transition(1, factory.readFromValuations("FTF"), f));

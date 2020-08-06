@@ -22,7 +22,7 @@ package ca.uqac.lif.cep.propman;
  * This machine is suitable for modeling stateless modifications to an
  * input event trace.
  */
-public class StatelessPropositionalMachine extends PropositionalMachine
+public class StatelessPropositionalMachine extends ExplicitPropositionalMachine
 {
   /**
    * Creates a new instance of the machine
