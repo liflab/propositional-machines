@@ -31,6 +31,24 @@ public class Valuation extends HashMap<String,Troolean.Value>
    */
   private static final transient long serialVersionUID = 1L;
   
+  /**
+   * Creates a new empty valuation.
+   */
+  public Valuation()
+  {
+    super();
+  }
+  
+  /**
+   * Creates a new valuation by copying the contents of another valuation.
+   * @param v The other valuation to copy from
+   */
+  public Valuation(Valuation v)
+  {
+    super();
+    putAll(v);
+  }
+  
   @Override
   public int hashCode()
   {

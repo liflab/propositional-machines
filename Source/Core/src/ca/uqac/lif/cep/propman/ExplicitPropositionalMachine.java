@@ -207,6 +207,10 @@ public class ExplicitPropositionalMachine extends PropositionalMachine
       }
       seen.add(current);
       List<Transition> trans = m_delta.get(current);
+      if (trans == null)
+      {
+        continue;
+      }
       for (Transition t : trans)
       {
         Object dest = t.getDestination();

@@ -17,6 +17,8 @@
  */
 package ca.uqac.lif.cep.propman;
 
+import ca.uqac.lif.cep.propman.MultiEventFunction.Identity;
+
 /**
  * Propositional machine whose all transitions loop onto its single state.
  * This machine is suitable for modeling stateless modifications to an
@@ -41,10 +43,14 @@ public class StatelessPropositionalMachine extends ExplicitPropositionalMachine
    */
   public void addCondition(MultiEvent condition, MultiEventFunction f)
   {
-    if (condition == null)
+    if (condition != null)
+    {
+      addTransition(0, new Transition(0, condition, f));
+      addTransition(0, new TransitionOtherwise(0, Identity.instance));
+    }
+    else
     {
       addTransition(0, new TransitionOtherwise(0, f));
     }
-    addTransition(0, new Transition(0, condition, f));
   }
 }

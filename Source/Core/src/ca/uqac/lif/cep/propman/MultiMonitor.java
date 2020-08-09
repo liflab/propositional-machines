@@ -185,6 +185,12 @@ public class MultiMonitor extends SynchronousProcessor
     } // end of states in m_sigma
 
     // update sigma and beta of the monitor
+    if (beta.get(Troolean.Value.TRUE).equals(BigInteger.ZERO) && beta.get(Troolean.Value.INCONCLUSIVE).equals(BigInteger.ZERO))
+    {
+      System.out.println("SCREWED");
+      System.out.println(m_sigma);
+      System.out.println(sigma_prime);
+    }
     m_sigma = sigma_prime;
     m_verdicts = beta;
 
